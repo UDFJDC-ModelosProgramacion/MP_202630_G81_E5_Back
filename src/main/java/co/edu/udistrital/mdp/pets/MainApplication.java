@@ -1,4 +1,4 @@
-package co.edu.udistrital.mdp.ZZZ;
+package co.edu.udistrital.mdp.pets;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
