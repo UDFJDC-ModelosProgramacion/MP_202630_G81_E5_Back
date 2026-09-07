@@ -38,4 +38,9 @@ public class AdoptionEntity extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "pet_id")
     private PetEntity pet;
+
+    @PodamExclude
+    @ManyToOne
+    @JoinColumn(name = "veterinarian_id")
+    private VeterinarianEntity responsibleVeterinarian;
 }
