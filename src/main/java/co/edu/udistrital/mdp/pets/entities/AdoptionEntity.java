@@ -43,4 +43,14 @@ public class AdoptionEntity extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "veterinarian_id")
     private VeterinarianEntity responsibleVeterinarian;
+
+    @PodamExclude
+    @ManyToOne
+    @JoinColumn(name = "adopter_id")
+    private AdopterEntity adopter;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "trial_cohabitation_id")
+    private TrialCohabitationEntity trialCohabitation;
+
 }

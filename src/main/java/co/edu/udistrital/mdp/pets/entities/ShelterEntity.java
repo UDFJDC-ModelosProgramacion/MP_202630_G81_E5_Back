@@ -26,4 +26,8 @@ public class ShelterEntity extends BaseEntity {
     @OneToMany(mappedBy = "shelter", cascade = CascadeType.PERSIST)
     private List<ShelterEventEntity> shelterEvents = new ArrayList<>();
 
+    @PodamExclude
+    @OneToMany(mappedBy = "shelter", cascade = CascadeType.PERSIST)
+    private List<NotificationEntity> notifications = new ArrayList<>();
+
 }
