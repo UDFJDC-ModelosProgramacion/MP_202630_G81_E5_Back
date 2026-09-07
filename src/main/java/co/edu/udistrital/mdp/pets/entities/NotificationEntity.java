@@ -6,6 +6,9 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import uk.co.jemos.podam.common.PodamExclude;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -19,4 +22,9 @@ public class NotificationEntity extends BaseEntity {
 
     private String channel; // "EMAIL", "SMS" o "PUSH"
 
+    @PodamExclude
+    @ManyToOne
+    @JoinColumn(name = "shelter_id")
+    private ShelterEntity shelter;
 }
+

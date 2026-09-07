@@ -14,3 +14,4 @@ public abstract class PersonEntity extends BaseEntity {
     private String phone;
 
 }
+
