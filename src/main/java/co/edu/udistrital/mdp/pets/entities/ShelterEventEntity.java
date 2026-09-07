@@ -3,10 +3,13 @@ package co.edu.udistrital.mdp.pets.entities;
 import java.util.Date;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import uk.co.jemos.podam.common.PodamExclude;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -19,5 +22,10 @@ public class ShelterEventEntity extends BaseEntity {
     private Date date;
 
     private String type;
+
+    @PodamExclude
+    @ManyToOne
+    @JoinColumn(name = "shelter_id")
+    private ShelterEntity shelter;
 
 }
