@@ -29,7 +29,7 @@ public class AdoptionEntity extends BaseEntity {
     private String status;
     
 
-
+    @PodamExclude 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "return_record_id")
     private ReturnRecordEntity returnRecord;

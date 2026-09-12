@@ -5,6 +5,8 @@ import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,6 +19,11 @@ public class VeterinarianEntity extends PersonEntity {
 
     private String specialty;
     private String availability;
+
+    @PodamExclude 
+    @ManyToOne 
+    @JoinColumn (name = "shelter_id")
+    private ShelterEntity shelter;
 
     @PodamExclude
     @OneToMany(mappedBy = "veterinarian", cascade = CascadeType.PERSIST)

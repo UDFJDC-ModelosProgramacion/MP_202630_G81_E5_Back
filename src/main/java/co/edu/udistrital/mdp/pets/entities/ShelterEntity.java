@@ -19,15 +19,30 @@ public class ShelterEntity extends BaseEntity {
     private String city;
 
     @PodamExclude
-    @OneToMany(mappedBy = "shelter", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "shelter", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<PetEntity> pets = new ArrayList<>();
 
-    @PodamExclude
-    @OneToMany(mappedBy = "shelter", cascade = CascadeType.PERSIST)
-    private List<ShelterEventEntity> shelterEvents = new ArrayList<>();
+    @PodamExclude 
+    @OneToMany (mappedBy = "shelter")
+    private List<VeterinarianEntity> veterinarians = new ArrayList<>();
 
     @PodamExclude
     @OneToMany(mappedBy = "shelter", cascade = CascadeType.PERSIST)
     private List<NotificationEntity> notifications = new ArrayList<>();
+
+    @PodamExclude 
+    @OneToMany(mappedBy = "shelter", cascade = CascadeType.PERSIST)
+    private List<PhotoEntity> photos = new ArrayList<>();
+
+    @PodamExclude 
+    @OneToMany(mappedBy = "shelter", cascade = CascadeType.PERSIST)
+    private List<VideoEntity> videos = new ArrayList<>();
+
+
+    @PodamExclude
+    @OneToMany(mappedBy = "shelter", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<ShelterEventEntity> shelterEvents = new ArrayList<>();
+
+    
 
 }
