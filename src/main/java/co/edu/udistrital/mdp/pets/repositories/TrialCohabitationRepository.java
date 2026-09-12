@@ -9,3 +9,4 @@ import co.edu.udistrital.mdp.pets.entities.TrialCohabitationEntity;
 public interface TrialCohabitationRepository extends JpaRepository<TrialCohabitationEntity, Long> {
 
 }
+

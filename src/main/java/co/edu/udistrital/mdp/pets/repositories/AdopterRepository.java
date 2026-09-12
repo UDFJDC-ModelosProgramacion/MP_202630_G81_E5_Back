@@ -9,3 +9,4 @@ import co.edu.udistrital.mdp.pets.entities.AdopterEntity;
 public interface AdopterRepository extends JpaRepository<AdopterEntity, Long> {
 
 }
+
