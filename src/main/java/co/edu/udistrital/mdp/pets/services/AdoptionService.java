@@ -26,11 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class AdoptionService {
 
-    /*
-     * El enunciado no especifica el conjunto exacto de valores válidos para
-     * "status". Se asume este conjunto; si el equipo ya definió otro (por
-     * ejemplo un enum), ajústalo aquí, en un único lugar.
-     */
+    
     private static final List<String> VALID_STATUSES = List.of("PENDING", "APPROVED", "ACTIVE", "RETURNED",
             "CANCELLED");
     // Estados "terminales": ya no cuentan como adopción activa sobre la mascota
