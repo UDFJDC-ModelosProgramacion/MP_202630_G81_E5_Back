@@ -13,7 +13,6 @@ import co.edu.udistrital.mdp.pets.exceptions.ErrorMessage;
 import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
 import co.edu.udistrital.mdp.pets.repositories.AdopterRepository;
 import co.edu.udistrital.mdp.pets.repositories.ReviewRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,107 +21,81 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ReviewService {
 
-    final ReviewRepository reviewRepository;
-    final AdopterRepository adopterRepository;
+	final ReviewRepository reviewRepository;
 
-    /**
-     * Regla: el adopter debe existir; rating entre 1 y 5.
-     */
-    @Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
-    public ReviewEntity createReview(Long adopterId, ReviewEntity reviewEntity)
-            throws EntityNotFoundException, IllegalOperationException {
-        log.info("Starting the process of creating a review for adopter with id = {}", adopterId);
+	final AdopterRepository adopterRepository;
 
-        AdopterEntity adopterEntity = getAdopterOrThrow(adopterId);
+	@Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
+	public ReviewEntity createReview(Long adopterId, ReviewEntity reviewEntity)
+			throws EntityNotFoundException, IllegalOperationException {
+		log.info("Starting process to create review for adopter with id = {0}", adopterId);
+		Optional<AdopterEntity> adopterOptional = adopterRepository.findById(adopterId);
+		if (adopterOptional.isEmpty())
+			throw new EntityNotFoundException(ErrorMessage.ADOPTER_NOT_FOUND);
 
-        if (!validateRating(reviewEntity))
-            throw new IllegalOperationException(ErrorMessage.REVIEW_RATING_INVALID);
+		if (!validateRating(reviewEntity.getRating()))
+			throw new IllegalOperationException(ErrorMessage.REVIEW_RATING_INVALID);
 
-        reviewEntity.setAdopter(adopterEntity);
+		reviewEntity.setAdopter(adopterOptional.get());
+		log.info("Finished process to create review for adopter with id = {0}", adopterId);
+		return reviewRepository.save(reviewEntity);
+	}
 
-        log.info("Finished process to create a review for adopter with id = {}", adopterId);
-        return reviewRepository.save(reviewEntity);
-    }
+	@Transactional(rollbackFor = { EntityNotFoundException.class })
+	public List<ReviewEntity> getReviews(Long adopterId) throws EntityNotFoundException {
+		log.info("Starting process to fetch reviews of adopter with id = {0}", adopterId);
+		Optional<AdopterEntity> adopterOptional = adopterRepository.findById(adopterId);
+		if (adopterOptional.isEmpty())
+			throw new EntityNotFoundException(ErrorMessage.ADOPTER_NOT_FOUND);
 
-    /**
-     * Lista todas las reviews de un adopter. El adopter debe existir.
-     */
-    @Transactional(rollbackFor = { EntityNotFoundException.class })
-    public List<ReviewEntity> getReviews(Long adopterId) throws EntityNotFoundException {
-        log.info("Starting process to fetch all reviews of adopter with id = {}", adopterId);
+		log.info("Finished process to fetch reviews of adopter with id = {0}", adopterId);
+		return adopterOptional.get().getReviews();
+	}
 
-        AdopterEntity adopterEntity = getAdopterOrThrow(adopterId);
+	@Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
+	public ReviewEntity getReview(Long adopterId, Long reviewId)
+			throws EntityNotFoundException, IllegalOperationException {
+		log.info("Starting process to fetch review with id = {0} of adopter with id = " + adopterId, reviewId);
+		Optional<AdopterEntity> adopterOptional = adopterRepository.findById(adopterId);
+		if (adopterOptional.isEmpty())
+			throw new EntityNotFoundException(ErrorMessage.ADOPTER_NOT_FOUND);
 
-        log.info("Finished process to fetch all reviews of adopter with id = {}", adopterId);
-        return adopterEntity.getReviews();
-    }
+		Optional<ReviewEntity> reviewOptional = reviewRepository.findById(reviewId);
+		if (reviewOptional.isEmpty())
+			throw new EntityNotFoundException(ErrorMessage.REVIEW_NOT_FOUND);
 
-    /**
-     * Regla: el adopter debe existir; la review debe pertenecer a ese adopter.
-     */
-    @Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
-    public ReviewEntity getReview(Long adopterId, Long reviewId)
-            throws EntityNotFoundException, IllegalOperationException {
-        log.info("Starting process to fetch review with id = {} of adopter with id = {}", reviewId, adopterId);
+		ReviewEntity reviewEntity = reviewOptional.get();
+		if (reviewEntity.getAdopter() == null || !reviewEntity.getAdopter().getId().equals(adopterId))
+			throw new IllegalOperationException(ErrorMessage.REVIEW_NOT_ASSOCIATED_TO_ADOPTER);
 
-        getAdopterOrThrow(adopterId);
+		log.info("Finished process to fetch review with id = {0} of adopter with id = " + adopterId, reviewId);
+		return reviewEntity;
+	}
 
-        Optional<ReviewEntity> reviewOptional = reviewRepository.findById(reviewId);
-        if (reviewOptional.isEmpty())
-            throw new EntityNotFoundException(ErrorMessage.REVIEW_NOT_FOUND);
+	@Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
+	public ReviewEntity updateReview(Long adopterId, Long reviewId, ReviewEntity review)
+			throws EntityNotFoundException, IllegalOperationException {
+		log.info("Starting process to update review with id = {0} of adopter with id = " + adopterId, reviewId);
+		ReviewEntity existingReview = getReview(adopterId, reviewId);
 
-        ReviewEntity reviewEntity = reviewOptional.get();
-        if (reviewEntity.getAdopter() == null || !reviewEntity.getAdopter().getId().equals(adopterId))
-            throw new IllegalOperationException(ErrorMessage.REVIEW_NOT_ASSOCIATED_TO_ADOPTER);
+		if (!validateRating(review.getRating()))
+			throw new IllegalOperationException(ErrorMessage.REVIEW_RATING_INVALID);
 
-        log.info("Finished process to fetch review with id = {} of adopter with id = {}", reviewId, adopterId);
-        return reviewEntity;
-    }
+		review.setId(existingReview.getId());
+		review.setAdopter(existingReview.getAdopter());
+		log.info("Finished process to update review with id = {0} of adopter with id = " + adopterId, reviewId);
+		return reviewRepository.save(review);
+	}
 
-    /**
-     * Regla: la review debe existir y pertenecer al adopter indicado; rating entre 1 y 5.
-     */
-    @Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
-    public ReviewEntity updateReview(Long adopterId, Long reviewId, ReviewEntity reviewEntity)
-            throws EntityNotFoundException, IllegalOperationException {
-        log.info("Starting process to update review with id = {} of adopter with id = {}", reviewId, adopterId);
+	@Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
+	public void deleteReview(Long adopterId, Long reviewId) throws EntityNotFoundException, IllegalOperationException {
+		log.info("Starting process to delete review with id = {0} of adopter with id = " + adopterId, reviewId);
+		ReviewEntity reviewEntity = getReview(adopterId, reviewId);
+		reviewRepository.deleteById(reviewEntity.getId());
+		log.info("Finished process to delete review with id = {0} of adopter with id = " + adopterId, reviewId);
+	}
 
-        // Valida que la review exista y pertenezca al adopter indicado
-        ReviewEntity existingReview = getReview(adopterId, reviewId);
-
-        if (!validateRating(reviewEntity))
-            throw new IllegalOperationException(ErrorMessage.REVIEW_RATING_INVALID);
-
-        reviewEntity.setId(reviewId);
-        reviewEntity.setAdopter(existingReview.getAdopter());
-
-        log.info("Finished process to update review with id = {} of adopter with id = {}", reviewId, adopterId);
-        return reviewRepository.save(reviewEntity);
-    }
-
-    /**
-     * Regla: la review debe existir y pertenecer al adopter indicado.
-     */
-    @Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
-    public void deleteReview(Long adopterId, Long reviewId)
-            throws EntityNotFoundException, IllegalOperationException {
-        log.info("Starting process to delete review with id = {} of adopter with id = {}", reviewId, adopterId);
-
-        // Valida que la review exista y pertenezca al adopter indicado
-        getReview(adopterId, reviewId);
-
-        reviewRepository.deleteById(reviewId);
-        log.info("Finished process to delete review with id = {} of adopter with id = {}", reviewId, adopterId);
-    }
-
-    private AdopterEntity getAdopterOrThrow(Long adopterId) throws EntityNotFoundException {
-        Optional<AdopterEntity> adopterOptional = adopterRepository.findById(adopterId);
-        if (adopterOptional.isEmpty())
-            throw new EntityNotFoundException(ErrorMessage.ADOPTER_NOT_FOUND);
-        return adopterOptional.get();
-    }
-
-    private boolean validateRating(ReviewEntity review) {
-        return review.getRating() >= 1 && review.getRating() <= 5;
-    }
+	private boolean validateRating(int rating) {
+		return rating >= 1 && rating <= 5;
+	}
 }
