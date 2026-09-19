@@ -48,7 +48,7 @@ public class MessageService {
         if (adopterOptional.isEmpty())
             throw new EntityNotFoundException(ErrorMessage.ADOPTER_NOT_FOUND);
 
-        return adopterOptional.get().getMessages();
+        return messageRepository.findByAdopterId(adopterId);
     }
 
     @Transactional(rollbackFor = {EntityNotFoundException.class, IllegalOperationException.class})
