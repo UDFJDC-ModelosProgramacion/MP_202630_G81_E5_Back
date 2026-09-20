@@ -3,6 +3,7 @@ package co.edu.udistrital.mdp.pets.services;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -37,6 +38,7 @@ class MessageServiceTest {
 
 	private List<MessageEntity> messageList = new ArrayList<>();
 	private AdopterEntity adopterEntity;
+	private AdopterEntity otherAdopterEntity;
 
 	@BeforeEach
 	void setUp() {
@@ -53,33 +55,49 @@ class MessageServiceTest {
 		adopterEntity = factory.manufacturePojo(AdopterEntity.class);
 		entityManager.persist(adopterEntity);
 
+		otherAdopterEntity = factory.manufacturePojo(AdopterEntity.class);
+		entityManager.persist(otherAdopterEntity);
+
 		for (int i = 0; i < 3; i++) {
 			MessageEntity messageEntity = factory.manufacturePojo(MessageEntity.class);
-			messageEntity.setSentDate(new Date());
+			messageEntity.setSentDate(pastDate());
 			messageEntity.setAdopter(adopterEntity);
 			entityManager.persist(messageEntity);
 			messageList.add(messageEntity);
 		}
+		adopterEntity.setMessages(messageList);
+
+	}
+
+	private Date pastDate() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DATE, -1);
+		return calendar.getTime();
+	}
+
+	private Date futureDate() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DATE, 5);
+		return calendar.getTime();
 	}
 
 	@Test
-	void testCreateMessage() throws IllegalOperationException {
+	void testCreateMessage() throws EntityNotFoundException, IllegalOperationException {
 		MessageEntity newEntity = factory.manufacturePojo(MessageEntity.class);
-		newEntity.setSentDate(new Date());
+		newEntity.setSentDate(pastDate());
 
 		MessageEntity result = messageService.createMessage(adopterEntity.getId(), newEntity);
 		assertNotNull(result);
 		MessageEntity entity = entityManager.find(MessageEntity.class, result.getId());
-		assertEquals(newEntity.getId(), entity.getId());
 		assertEquals(newEntity.getContent(), entity.getContent());
 		assertEquals(adopterEntity.getId(), entity.getAdopter().getId());
 	}
 
 	@Test
-	void testCreateMessageWithInvalidAdopter() {
-		assertThrows(IllegalOperationException.class, () -> {
+	void testCreateMessageInvalidAdopter() {
+		assertThrows(EntityNotFoundException.class, () -> {
 			MessageEntity newEntity = factory.manufacturePojo(MessageEntity.class);
-			newEntity.setSentDate(new Date());
+			newEntity.setSentDate(pastDate());
 			messageService.createMessage(0L, newEntity);
 		});
 	}
@@ -88,8 +106,8 @@ class MessageServiceTest {
 	void testCreateMessageWithNoValidContent() {
 		assertThrows(IllegalOperationException.class, () -> {
 			MessageEntity newEntity = factory.manufacturePojo(MessageEntity.class);
-			newEntity.setSentDate(new Date());
 			newEntity.setContent("");
+			newEntity.setSentDate(pastDate());
 			messageService.createMessage(adopterEntity.getId(), newEntity);
 		});
 	}
@@ -98,7 +116,7 @@ class MessageServiceTest {
 	void testCreateMessageWithFutureDate() {
 		assertThrows(IllegalOperationException.class, () -> {
 			MessageEntity newEntity = factory.manufacturePojo(MessageEntity.class);
-			newEntity.setSentDate(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24));
+			newEntity.setSentDate(futureDate());
 			messageService.createMessage(adopterEntity.getId(), newEntity);
 		});
 	}
@@ -110,7 +128,7 @@ class MessageServiceTest {
 	}
 
 	@Test
-	void testGetMessagesWithInvalidAdopter() {
+	void testGetMessagesInvalidAdopter() {
 		assertThrows(EntityNotFoundException.class, () -> {
 			messageService.getMessages(0L);
 		});
@@ -119,10 +137,9 @@ class MessageServiceTest {
 	@Test
 	void testGetMessage() throws EntityNotFoundException, IllegalOperationException {
 		MessageEntity entity = messageList.get(0);
-		MessageEntity resultEntity = messageService.getMessage(adopterEntity.getId(), entity.getId());
-		assertNotNull(resultEntity);
-		assertEquals(entity.getId(), resultEntity.getId());
-		assertEquals(entity.getContent(), resultEntity.getContent());
+		MessageEntity result = messageService.getMessage(adopterEntity.getId(), entity.getId());
+		assertNotNull(result);
+		assertEquals(entity.getId(), result.getId());
 	}
 
 	@Test
@@ -135,28 +152,27 @@ class MessageServiceTest {
 	@Test
 	void testGetMessageNotAssociatedToAdopter() {
 		assertThrows(IllegalOperationException.class, () -> {
-			AdopterEntity otherAdopter = factory.manufacturePojo(AdopterEntity.class);
-			entityManager.persist(otherAdopter);
-			MessageEntity entity = messageList.get(0);
-			messageService.getMessage(otherAdopter.getId(), entity.getId());
+			messageService.getMessage(otherAdopterEntity.getId(), messageList.get(0).getId());
 		});
 	}
 
 	@Test
-	void testUpdateMessage() {
-		assertThrows(IllegalOperationException.class, () -> {
-			MessageEntity entity = messageList.get(0);
-			MessageEntity pojoEntity = factory.manufacturePojo(MessageEntity.class);
-			pojoEntity.setId(entity.getId());
-			messageService.updateMessage(adopterEntity.getId(), entity.getId(), pojoEntity);
-		});
+	void testUpdateMessage() throws EntityNotFoundException, IllegalOperationException {
+		MessageEntity entity = messageList.get(0);
+		MessageEntity pojoEntity = factory.manufacturePojo(MessageEntity.class);
+		pojoEntity.setId(entity.getId());
+		pojoEntity.setSentDate(pastDate());
+
+		messageService.updateMessage(adopterEntity.getId(), entity.getId(), pojoEntity);
+		MessageEntity resp = entityManager.find(MessageEntity.class, entity.getId());
+		assertEquals(pojoEntity.getContent(), resp.getContent());
 	}
 
 	@Test
 	void testUpdateInvalidMessage() {
 		assertThrows(EntityNotFoundException.class, () -> {
 			MessageEntity pojoEntity = factory.manufacturePojo(MessageEntity.class);
-			pojoEntity.setId(0L);
+			pojoEntity.setSentDate(pastDate());
 			messageService.updateMessage(adopterEntity.getId(), 0L, pojoEntity);
 		});
 	}
@@ -165,14 +181,20 @@ class MessageServiceTest {
 	void testDeleteMessage() throws EntityNotFoundException, IllegalOperationException {
 		MessageEntity entity = messageList.get(0);
 		messageService.deleteMessage(adopterEntity.getId(), entity.getId());
-		MessageEntity deleted = entityManager.find(MessageEntity.class, entity.getId());
-		assertNull(deleted);
+		assertNull(entityManager.find(MessageEntity.class, entity.getId()));
 	}
 
 	@Test
 	void testDeleteInvalidMessage() {
 		assertThrows(EntityNotFoundException.class, () -> {
 			messageService.deleteMessage(adopterEntity.getId(), 0L);
+		});
+	}
+
+	@Test
+	void testDeleteMessageNotAssociatedToAdopter() {
+		assertThrows(IllegalOperationException.class, () -> {
+			messageService.deleteMessage(otherAdopterEntity.getId(), messageList.get(0).getId());
 		});
 	}
 

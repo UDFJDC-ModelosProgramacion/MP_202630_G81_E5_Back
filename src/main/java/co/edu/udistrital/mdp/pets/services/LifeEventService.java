@@ -25,111 +25,99 @@ import lombok.extern.slf4j.Slf4j;
 public class LifeEventService {
 
     final LifeEventRepository lifeEventRepository;
-    final PetRepository petRepository;
-    final VeterinarianRepository veterinarianRepository;
 
-    @Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
-    public LifeEventEntity createLifeEvent(Long petId, LifeEventEntity lifeEventEntity)
-            throws EntityNotFoundException, IllegalOperationException {
-        log.info("Starting the process of creating a life event for pet with id = ", petId);
+	final PetRepository petRepository;
 
-        Optional<PetEntity> petOptional = petRepository.findById(petId);
-        if (petOptional.isEmpty())
-            throw new EntityNotFoundException(ErrorMessage.PET_NOT_FOUND);
+	final VeterinarianRepository veterinarianRepository;
 
-        if (!validateLifeEvent(lifeEventEntity))
-            throw new IllegalOperationException(ErrorMessage.LIFE_EVENT_NOT_VALID);
+	@Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
+	public LifeEventEntity createLifeEvent(Long petId, LifeEventEntity lifeEventEntity)
+			throws EntityNotFoundException, IllegalOperationException {
+		log.info("Starting process to create life event for pet with id = {0}", petId);
+		Optional<PetEntity> petOptional = petRepository.findById(petId);
+		if (petOptional.isEmpty())
+			throw new EntityNotFoundException(ErrorMessage.PET_NOT_FOUND);
 
-        if (lifeEventEntity.getVeterinarian() != null) {
-            Optional<VeterinarianEntity> veterinarianOptional = veterinarianRepository
-                    .findById(lifeEventEntity.getVeterinarian().getId());
-            if (veterinarianOptional.isEmpty())
-                throw new IllegalOperationException(ErrorMessage.VETERINARIAN_NOT_VALID);
-            lifeEventEntity.setVeterinarian(veterinarianOptional.get());
-        }
+		if (!validateLifeEvent(lifeEventEntity))
+			throw new IllegalOperationException(ErrorMessage.LIFE_EVENT_NOT_VALID);
 
-        lifeEventEntity.setPet(petOptional.get());
-        log.info("Finished process to create a life event for pet with id = ", petId);
-        return lifeEventRepository.save(lifeEventEntity);
-    }
+		if (lifeEventEntity.getVeterinarian() != null) {
+			Optional<VeterinarianEntity> vetOptional = veterinarianRepository
+					.findById(lifeEventEntity.getVeterinarian().getId());
+			if (vetOptional.isEmpty())
+				throw new EntityNotFoundException(ErrorMessage.VETERINARIAN_NOT_FOUND);
+			lifeEventEntity.setVeterinarian(vetOptional.get());
+		}
 
-    @Transactional(rollbackFor = { EntityNotFoundException.class })
-    public List<LifeEventEntity> getLifeEvents(Long petId) throws EntityNotFoundException {
-        log.info("Starting process to fetch all life events of pet with id = ", petId);
-        Optional<PetEntity> petOptional = petRepository.findById(petId);
-        if (petOptional.isEmpty())
-            throw new EntityNotFoundException(ErrorMessage.PET_NOT_FOUND);
+		lifeEventEntity.setPet(petOptional.get());
+		log.info("Finished process to create life event for pet with id = {0}", petId);
+		return lifeEventRepository.save(lifeEventEntity);
+	}
 
-        log.info("Finished process to fetch all life events of pet with id = ", petId);
-        return petOptional.get().getLifeEvents();
-    }
+	@Transactional(rollbackFor = { EntityNotFoundException.class })
+	public List<LifeEventEntity> getLifeEvents(Long petId) throws EntityNotFoundException {
+		log.info("Starting process to fetch life events of pet with id = {0}", petId);
+		Optional<PetEntity> petOptional = petRepository.findById(petId);
+		if (petOptional.isEmpty())
+			throw new EntityNotFoundException(ErrorMessage.PET_NOT_FOUND);
 
-    @Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
-    public LifeEventEntity getLifeEvent(Long petId, Long lifeEventId)
-            throws EntityNotFoundException, IllegalOperationException {
-        log.info("Starting process to fetch life event with id = ", lifeEventId);
+		log.info("Finished process to fetch life events of pet with id = {0}", petId);
+		return petOptional.get().getLifeEvents();
+	}
 
-        Optional<PetEntity> petOptional = petRepository.findById(petId);
-        if (petOptional.isEmpty())
-            throw new EntityNotFoundException(ErrorMessage.PET_NOT_FOUND);
+	@Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
+	public LifeEventEntity getLifeEvent(Long petId, Long lifeEventId)
+			throws EntityNotFoundException, IllegalOperationException {
+		log.info("Starting process to fetch life event with id = {0} of pet with id = " + petId, lifeEventId);
+		Optional<PetEntity> petOptional = petRepository.findById(petId);
+		if (petOptional.isEmpty())
+			throw new EntityNotFoundException(ErrorMessage.PET_NOT_FOUND);
 
-        Optional<LifeEventEntity> lifeEventOptional = lifeEventRepository.findById(lifeEventId);
-        if (lifeEventOptional.isEmpty())
-            throw new EntityNotFoundException(ErrorMessage.LIFE_EVENT_NOT_FOUND);
+		Optional<LifeEventEntity> lifeEventOptional = lifeEventRepository.findById(lifeEventId);
+		if (lifeEventOptional.isEmpty())
+			throw new EntityNotFoundException(ErrorMessage.LIFE_EVENT_NOT_FOUND);
 
-        if (!lifeEventOptional.get().getPet().getId().equals(petId))
-            throw new IllegalOperationException(ErrorMessage.LIFE_EVENT_NOT_ASSOCIATED_TO_PET);
+		LifeEventEntity lifeEventEntity = lifeEventOptional.get();
+		if (lifeEventEntity.getPet() == null || !lifeEventEntity.getPet().getId().equals(petId))
+			throw new IllegalOperationException(ErrorMessage.LIFE_EVENT_NOT_ASSOCIATED_TO_PET);
 
-        log.info("Finished process to fetch life event with id = ", lifeEventId);
-        return lifeEventOptional.get();
-    }
+		log.info("Finished process to fetch life event with id = {0} of pet with id = " + petId, lifeEventId);
+		return lifeEventEntity;
+	}
 
-    @Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
-    public LifeEventEntity updateLifeEvent(Long petId, Long lifeEventId, LifeEventEntity lifeEventEntity)
-            throws EntityNotFoundException, IllegalOperationException {
-        log.info("Starting process to update life event with id = ", lifeEventId);
+	@Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
+	public LifeEventEntity updateLifeEvent(Long petId, Long lifeEventId, LifeEventEntity lifeEvent)
+			throws EntityNotFoundException, IllegalOperationException {
+		log.info("Starting process to update life event with id = {0} of pet with id = " + petId, lifeEventId);
+		LifeEventEntity existingLifeEvent = getLifeEvent(petId, lifeEventId);
 
-        Optional<PetEntity> petOptional = petRepository.findById(petId);
-        if (petOptional.isEmpty())
-            throw new EntityNotFoundException(ErrorMessage.PET_NOT_FOUND);
+		if (!validateLifeEvent(lifeEvent))
+			throw new IllegalOperationException(ErrorMessage.LIFE_EVENT_NOT_VALID);
 
-        Optional<LifeEventEntity> lifeEventOptional = lifeEventRepository.findById(lifeEventId);
-        if (lifeEventOptional.isEmpty())
-            throw new EntityNotFoundException(ErrorMessage.LIFE_EVENT_NOT_FOUND);
+		if (lifeEvent.getVeterinarian() != null) {
+			Optional<VeterinarianEntity> vetOptional = veterinarianRepository
+					.findById(lifeEvent.getVeterinarian().getId());
+			if (vetOptional.isEmpty())
+				throw new EntityNotFoundException(ErrorMessage.VETERINARIAN_NOT_FOUND);
+			lifeEvent.setVeterinarian(vetOptional.get());
+		}
 
-        if (!lifeEventOptional.get().getPet().getId().equals(petId))
-            throw new IllegalOperationException(ErrorMessage.LIFE_EVENT_NOT_ASSOCIATED_TO_PET);
+		lifeEvent.setId(existingLifeEvent.getId());
+		lifeEvent.setPet(existingLifeEvent.getPet());
+		log.info("Finished process to update life event with id = {0} of pet with id = " + petId, lifeEventId);
+		return lifeEventRepository.save(lifeEvent);
+	}
 
-        if (!validateLifeEvent(lifeEventEntity))
-            throw new IllegalOperationException(ErrorMessage.LIFE_EVENT_NOT_VALID);
+	@Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
+	public void deleteLifeEvent(Long petId, Long lifeEventId)
+			throws EntityNotFoundException, IllegalOperationException {
+		log.info("Starting process to delete life event with id = {0} of pet with id = " + petId, lifeEventId);
+		LifeEventEntity lifeEventEntity = getLifeEvent(petId, lifeEventId);
+		lifeEventRepository.deleteById(lifeEventEntity.getId());
+		log.info("Finished process to delete life event with id = {0} of pet with id = " + petId, lifeEventId);
+	}
 
-        lifeEventEntity.setId(lifeEventId);
-        lifeEventEntity.setPet(petOptional.get());
-        log.info("Finished process to update life event with id = ", lifeEventId);
-        return lifeEventRepository.save(lifeEventEntity);
-    }
-
-    @Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
-    public void deleteLifeEvent(Long petId, Long lifeEventId)
-            throws EntityNotFoundException, IllegalOperationException {
-        log.info("Starting process to delete life event with id = ", lifeEventId);
-
-        Optional<PetEntity> petOptional = petRepository.findById(petId);
-        if (petOptional.isEmpty())
-            throw new EntityNotFoundException(ErrorMessage.PET_NOT_FOUND);
-
-        Optional<LifeEventEntity> lifeEventOptional = lifeEventRepository.findById(lifeEventId);
-        if (lifeEventOptional.isEmpty())
-            throw new EntityNotFoundException(ErrorMessage.LIFE_EVENT_NOT_FOUND);
-
-        if (!lifeEventOptional.get().getPet().getId().equals(petId))
-            throw new IllegalOperationException(ErrorMessage.LIFE_EVENT_NOT_ASSOCIATED_TO_PET);
-
-        lifeEventRepository.deleteById(lifeEventId);
-        log.info("Finished process to delete life event with id = ", lifeEventId);
-    }
-
-    private boolean validateLifeEvent(LifeEventEntity lifeEvent) {
-        return lifeEvent.getType() != null && !lifeEvent.getType().isEmpty() && lifeEvent.getDate() != null;
-    }
+	private boolean validateLifeEvent(LifeEventEntity lifeEvent) {
+		return lifeEvent.getType() != null && !lifeEvent.getType().isEmpty() && lifeEvent.getDate() != null;
+	}
 }

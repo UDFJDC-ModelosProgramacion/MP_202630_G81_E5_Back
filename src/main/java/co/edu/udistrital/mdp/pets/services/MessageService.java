@@ -21,74 +21,84 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class MessageService {
     final MessageRepository messageRepository;
-    final AdopterRepository adopterRepository;
 
-    @Transactional(rollbackFor = {IllegalOperationException.class})
-    public MessageEntity createMessage(Long adopterId, MessageEntity messageEntity) throws IllegalOperationException {
-        log.info("Starting the process of creating a message");
-        Optional<AdopterEntity> adopterOptional = adopterRepository.findById(adopterId);
-        if (adopterOptional.isEmpty())
-            throw new IllegalOperationException(ErrorMessage.ADOPTER_NOT_VALID);
+	final AdopterRepository adopterRepository;
 
-        if (!validateMessage(messageEntity))
-            throw new IllegalOperationException(ErrorMessage.MESSAGE_NOT_VALID);
+	@Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
+	public MessageEntity createMessage(Long adopterId, MessageEntity messageEntity)
+			throws EntityNotFoundException, IllegalOperationException {
+		log.info("Starting process to create message for adopter with id = {0}", adopterId);
+		Optional<AdopterEntity> adopterOptional = adopterRepository.findById(adopterId);
+		if (adopterOptional.isEmpty())
+			throw new EntityNotFoundException(ErrorMessage.ADOPTER_NOT_FOUND);
 
-        if (messageEntity.getSentDate() != null && messageEntity.getSentDate().after(new Date()))
-            throw new IllegalOperationException(ErrorMessage.MESSAGE_DATE_INVALID);
+		if (!validateMessage(messageEntity))
+			throw new IllegalOperationException(ErrorMessage.MESSAGE_NOT_VALID);
 
-        messageEntity.setAdopter(adopterOptional.get());
-        log.info("Finished process to create a message");
-        return messageRepository.save(messageEntity);
-    }
+		messageEntity.setAdopter(adopterOptional.get());
+		log.info("Finished process to create message for adopter with id = {0}", adopterId);
+		return messageRepository.save(messageEntity);
+	}
 
-    @Transactional
-    public List<MessageEntity> getMessages(Long adopterId) throws EntityNotFoundException {
-        log.info("Starting process to fetch all messages for adopter with id = ", adopterId);
-        Optional<AdopterEntity> adopterOptional = adopterRepository.findById(adopterId);
-        if (adopterOptional.isEmpty())
-            throw new EntityNotFoundException(ErrorMessage.ADOPTER_NOT_FOUND);
+	@Transactional(rollbackFor = { EntityNotFoundException.class })
+	public List<MessageEntity> getMessages(Long adopterId) throws EntityNotFoundException {
+		log.info("Starting process to fetch messages of adopter with id = {0}", adopterId);
+		Optional<AdopterEntity> adopterOptional = adopterRepository.findById(adopterId);
+		if (adopterOptional.isEmpty())
+			throw new EntityNotFoundException(ErrorMessage.ADOPTER_NOT_FOUND);
 
-        return messageRepository.findByAdopterId(adopterId);
-    }
+		log.info("Finished process to fetch messages of adopter with id = {0}", adopterId);
+		return adopterOptional.get().getMessages();
+	}
 
-    @Transactional(rollbackFor = {EntityNotFoundException.class, IllegalOperationException.class})
-    public MessageEntity getMessage(Long adopterId, Long messageId) throws EntityNotFoundException, IllegalOperationException {
-        log.info("Starting process to fetch message with id = ", messageId);
-        Optional<AdopterEntity> adopterOptional = adopterRepository.findById(adopterId);
-        if (adopterOptional.isEmpty())
-            throw new EntityNotFoundException(ErrorMessage.ADOPTER_NOT_FOUND);
+	@Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
+	public MessageEntity getMessage(Long adopterId, Long messageId)
+			throws EntityNotFoundException, IllegalOperationException {
+		log.info("Starting process to fetch message with id = {0} of adopter with id = " + adopterId, messageId);
+		Optional<AdopterEntity> adopterOptional = adopterRepository.findById(adopterId);
+		if (adopterOptional.isEmpty())
+			throw new EntityNotFoundException(ErrorMessage.ADOPTER_NOT_FOUND);
 
-        Optional<MessageEntity> messageOptional = messageRepository.findById(messageId);
-        if (messageOptional.isEmpty())
-            throw new EntityNotFoundException(ErrorMessage.MESSAGE_NOT_FOUND);
+		Optional<MessageEntity> messageOptional = messageRepository.findById(messageId);
+		if (messageOptional.isEmpty())
+			throw new EntityNotFoundException(ErrorMessage.MESSAGE_NOT_FOUND);
 
-        if (messageOptional.get().getAdopter() == null
-                || !messageOptional.get().getAdopter().getId().equals(adopterId))
-            throw new IllegalOperationException(ErrorMessage.MESSAGE_NOT_ASSOCIATED_TO_ADOPTER);
+		MessageEntity messageEntity = messageOptional.get();
+		if (messageEntity.getAdopter() == null || !messageEntity.getAdopter().getId().equals(adopterId))
+			throw new IllegalOperationException(ErrorMessage.MESSAGE_NOT_ASSOCIATED_TO_ADOPTER);
 
-        log.info("Finished process to fetch message with id = ", messageId);
-        return messageOptional.get();
-    }
+		log.info("Finished process to fetch message with id = {0} of adopter with id = " + adopterId, messageId);
+		return messageEntity;
+	}
 
-    @Transactional(rollbackFor = {EntityNotFoundException.class, IllegalOperationException.class})
-    public MessageEntity updateMessage(Long adopterId, Long messageId, MessageEntity message) throws EntityNotFoundException, IllegalOperationException {
-        log.info("Starting process to update message with id = ", messageId);
-        getMessage(adopterId, messageId);
+	@Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
+	public MessageEntity updateMessage(Long adopterId, Long messageId, MessageEntity message)
+			throws EntityNotFoundException, IllegalOperationException {
+		log.info("Starting process to update message with id = {0} of adopter with id = " + adopterId, messageId);
+		MessageEntity existingMessage = getMessage(adopterId, messageId);
 
-        throw new IllegalOperationException(ErrorMessage.MESSAGE_NOT_VALID);
-    }
+		if (!validateMessage(message))
+			throw new IllegalOperationException(ErrorMessage.MESSAGE_NOT_VALID);
 
-    @Transactional(rollbackFor = {EntityNotFoundException.class, IllegalOperationException.class})
-    public void deleteMessage(Long adopterId, Long messageId) throws EntityNotFoundException, IllegalOperationException {
-        log.info("Starting process to delete message with id = ", messageId);
-        getMessage(adopterId, messageId);
+		message.setId(existingMessage.getId());
+		message.setAdopter(existingMessage.getAdopter());
+		log.info("Finished process to update message with id = {0} of adopter with id = " + adopterId, messageId);
+		return messageRepository.save(message);
+	}
 
-        messageRepository.deleteById(messageId);
-        log.info("Finished process to delete message with id = ", messageId);
-    }
+	@Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
+	public void deleteMessage(Long adopterId, Long messageId)
+			throws EntityNotFoundException, IllegalOperationException {
+		log.info("Starting process to delete message with id = {0} of adopter with id = " + adopterId, messageId);
+		MessageEntity messageEntity = getMessage(adopterId, messageId);
+		messageRepository.deleteById(messageEntity.getId());
+		log.info("Finished process to delete message with id = {0} of adopter with id = " + adopterId, messageId);
+	}
 
-    private boolean validateMessage(MessageEntity message) {
-        return message.getContent() != null && !message.getContent().isEmpty();
-    }
+	private boolean validateMessage(MessageEntity message) {
+		if (message.getContent() == null || message.getContent().isEmpty())
+			return false;
+		return message.getSentDate() != null && !message.getSentDate().after(new Date());
+	}
 
 }

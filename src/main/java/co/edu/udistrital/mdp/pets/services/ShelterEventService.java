@@ -20,81 +20,89 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ShelterEventService {
     final ShelterEventRepository shelterEventRepository;
-    final ShelterRepository shelterRepository;
 
-    @Transactional(rollbackFor = {IllegalOperationException.class})
-    public ShelterEventEntity createShelterEvent(Long shelterId, ShelterEventEntity shelterEventEntity) throws IllegalOperationException {
-        log.info("Starting the process of creating a shelter event");
-        Optional<ShelterEntity> shelterOptional = shelterRepository.findById(shelterId);
-        if (shelterOptional.isEmpty())
-            throw new IllegalOperationException(ErrorMessage.SHELTER_NOT_VALID);
+	final ShelterRepository shelterRepository;
 
-        if (!validateShelterEvent(shelterEventEntity))
-            throw new IllegalOperationException(ErrorMessage.SHELTER_EVENT_NOT_VALID);
+	@Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
+	public ShelterEventEntity createShelterEvent(Long shelterId, ShelterEventEntity shelterEventEntity)
+			throws EntityNotFoundException, IllegalOperationException {
+		log.info("Starting process to create shelter event for shelter with id = {0}", shelterId);
+		Optional<ShelterEntity> shelterOptional = shelterRepository.findById(shelterId);
+		if (shelterOptional.isEmpty())
+			throw new EntityNotFoundException(ErrorMessage.SHELTER_NOT_FOUND);
 
-        shelterEventEntity.setShelter(shelterOptional.get());
-        log.info("Finished process to create a shelter event");
-        return shelterEventRepository.save(shelterEventEntity);
-    }
+		if (!validateShelterEvent(shelterEventEntity))
+			throw new IllegalOperationException(ErrorMessage.SHELTER_EVENT_NOT_VALID);
 
-    @Transactional
-    public List<ShelterEventEntity> getShelterEvents(Long shelterId) throws EntityNotFoundException {
-        log.info("Starting process to fetch all shelter events for shelter with id = ", shelterId);
-        Optional<ShelterEntity> shelterOptional = shelterRepository.findById(shelterId);
-        if (shelterOptional.isEmpty())
-            throw new EntityNotFoundException(ErrorMessage.SHELTER_NOT_FOUND);
+		shelterEventEntity.setShelter(shelterOptional.get());
+		log.info("Finished process to create shelter event for shelter with id = {0}", shelterId);
+		return shelterEventRepository.save(shelterEventEntity);
+	}
 
-        return shelterOptional.get().getShelterEvents();
-    }
+	@Transactional(rollbackFor = { EntityNotFoundException.class })
+	public List<ShelterEventEntity> getShelterEvents(Long shelterId) throws EntityNotFoundException {
+		log.info("Starting process to fetch shelter events of shelter with id = {0}", shelterId);
+		Optional<ShelterEntity> shelterOptional = shelterRepository.findById(shelterId);
+		if (shelterOptional.isEmpty())
+			throw new EntityNotFoundException(ErrorMessage.SHELTER_NOT_FOUND);
 
-    @Transactional(rollbackFor = {EntityNotFoundException.class, IllegalOperationException.class})
-    public ShelterEventEntity getShelterEvent(Long shelterId, Long shelterEventId) throws EntityNotFoundException, IllegalOperationException {
-        log.info("Starting process to fetch shelter event with id = ", shelterEventId);
-        Optional<ShelterEntity> shelterOptional = shelterRepository.findById(shelterId);
-        if (shelterOptional.isEmpty())
-            throw new EntityNotFoundException(ErrorMessage.SHELTER_NOT_FOUND);
+		log.info("Finished process to fetch shelter events of shelter with id = {0}", shelterId);
+		return shelterOptional.get().getShelterEvents();
+	}
 
-        Optional<ShelterEventEntity> shelterEventOptional = shelterEventRepository.findById(shelterEventId);
-        if (shelterEventOptional.isEmpty())
-            throw new EntityNotFoundException(ErrorMessage.SHELTER_EVENT_NOT_FOUND);
+	@Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
+	public ShelterEventEntity getShelterEvent(Long shelterId, Long shelterEventId)
+			throws EntityNotFoundException, IllegalOperationException {
+		log.info("Starting process to fetch shelter event with id = {0} of shelter with id = " + shelterId,
+				shelterEventId);
+		Optional<ShelterEntity> shelterOptional = shelterRepository.findById(shelterId);
+		if (shelterOptional.isEmpty())
+			throw new EntityNotFoundException(ErrorMessage.SHELTER_NOT_FOUND);
 
-        if (shelterEventOptional.get().getShelter() == null
-                || !shelterEventOptional.get().getShelter().getId().equals(shelterId))
-            throw new IllegalOperationException(ErrorMessage.SHELTER_EVENT_NOT_ASSOCIATED_TO_SHELTER);
+		Optional<ShelterEventEntity> shelterEventOptional = shelterEventRepository.findById(shelterEventId);
+		if (shelterEventOptional.isEmpty())
+			throw new EntityNotFoundException(ErrorMessage.SHELTER_EVENT_NOT_FOUND);
 
-        log.info("Finished process to fetch shelter event with id = ", shelterEventId);
-        return shelterEventOptional.get();
-    }
+		ShelterEventEntity shelterEventEntity = shelterEventOptional.get();
+		if (shelterEventEntity.getShelter() == null || !shelterEventEntity.getShelter().getId().equals(shelterId))
+			throw new IllegalOperationException(ErrorMessage.SHELTER_EVENT_NOT_ASSOCIATED_TO_SHELTER);
 
-    @Transactional(rollbackFor = {EntityNotFoundException.class, IllegalOperationException.class})
-    public ShelterEventEntity updateShelterEvent(Long shelterId, Long shelterEventId, ShelterEventEntity shelterEvent) throws EntityNotFoundException, IllegalOperationException {
-        log.info("Starting process to update shelter event with id = ", shelterEventId);
-        ShelterEventEntity existing = getShelterEvent(shelterId, shelterEventId);
+		log.info("Finished process to fetch shelter event with id = {0} of shelter with id = " + shelterId,
+				shelterEventId);
+		return shelterEventEntity;
+	}
 
-        if (!validateShelterEvent(shelterEvent))
-            throw new IllegalOperationException(ErrorMessage.SHELTER_EVENT_NOT_VALID);
+	@Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
+	public ShelterEventEntity updateShelterEvent(Long shelterId, Long shelterEventId, ShelterEventEntity shelterEvent)
+			throws EntityNotFoundException, IllegalOperationException {
+		log.info("Starting process to update shelter event with id = {0} of shelter with id = " + shelterId,
+				shelterEventId);
+		ShelterEventEntity existingShelterEvent = getShelterEvent(shelterId, shelterEventId);
 
-        shelterEvent.setId(shelterEventId);
-        shelterEvent.setShelter(existing.getShelter());
-        log.info("Finished process to update shelter event with id = ", shelterEventId);
-        return shelterEventRepository.save(shelterEvent);
-    }
+		if (!validateShelterEvent(shelterEvent))
+			throw new IllegalOperationException(ErrorMessage.SHELTER_EVENT_NOT_VALID);
 
-    @Transactional(rollbackFor = {EntityNotFoundException.class, IllegalOperationException.class})
-    public void deleteShelterEvent(Long shelterId, Long shelterEventId) throws EntityNotFoundException, IllegalOperationException {
-        log.info("Starting process to delete shelter event with id = ", shelterEventId);
-        ShelterEventEntity existing = getShelterEvent(shelterId, shelterEventId);
+		shelterEvent.setId(existingShelterEvent.getId());
+		shelterEvent.setShelter(existingShelterEvent.getShelter());
+		log.info("Finished process to update shelter event with id = {0} of shelter with id = " + shelterId,
+				shelterEventId);
+		return shelterEventRepository.save(shelterEvent);
+	}
 
-        if (existing.getDate() != null && existing.getDate().before(new java.util.Date()))
-            throw new IllegalOperationException(ErrorMessage.SHELTER_EVENT_NOT_VALID);
+	@Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
+	public void deleteShelterEvent(Long shelterId, Long shelterEventId)
+			throws EntityNotFoundException, IllegalOperationException {
+		log.info("Starting process to delete shelter event with id = {0} of shelter with id = " + shelterId,
+				shelterEventId);
+		ShelterEventEntity shelterEventEntity = getShelterEvent(shelterId, shelterEventId);
+		shelterEventRepository.deleteById(shelterEventEntity.getId());
+		log.info("Finished process to delete shelter event with id = {0} of shelter with id = " + shelterId,
+				shelterEventId);
+	}
 
-        shelterEventRepository.deleteById(shelterEventId);
-        log.info("Finished process to delete shelter event with id = ", shelterEventId);
-    }
-
-    private boolean validateShelterEvent(ShelterEventEntity shelterEvent) {
-        return shelterEvent.getTitle() != null && !shelterEvent.getTitle().isEmpty()
-                && shelterEvent.getDate() != null;
-    }
+	private boolean validateShelterEvent(ShelterEventEntity shelterEvent) {
+		return shelterEvent.getTitle() != null && !shelterEvent.getTitle().isEmpty()
+				&& shelterEvent.getDate() != null;
+	}
 
 }

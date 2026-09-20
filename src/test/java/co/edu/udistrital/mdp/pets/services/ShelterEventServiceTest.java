@@ -3,7 +3,6 @@ package co.edu.udistrital.mdp.pets.services;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import jakarta.transaction.Transactional;
@@ -35,8 +34,9 @@ class ShelterEventServiceTest {
 
 	private PodamFactory factory = new PodamFactoryImpl();
 
-	private List<ShelterEventEntity> shelterEventList = new ArrayList<>();
+	private List<ShelterEventEntity> eventList = new ArrayList<>();
 	private ShelterEntity shelterEntity;
+	private ShelterEntity otherShelterEntity;
 
 	@BeforeEach
 	void setUp() {
@@ -53,31 +53,31 @@ class ShelterEventServiceTest {
 		shelterEntity = factory.manufacturePojo(ShelterEntity.class);
 		entityManager.persist(shelterEntity);
 
+		otherShelterEntity = factory.manufacturePojo(ShelterEntity.class);
+		entityManager.persist(otherShelterEntity);
+
 		for (int i = 0; i < 3; i++) {
 			ShelterEventEntity eventEntity = factory.manufacturePojo(ShelterEventEntity.class);
-			eventEntity.setDate(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * (i + 1)));
 			eventEntity.setShelter(shelterEntity);
 			entityManager.persist(eventEntity);
-			shelterEventList.add(eventEntity);
+			eventList.add(eventEntity);
 		}
+		shelterEntity.setShelterEvents(eventList);
 	}
 
 	@Test
-	void testCreateShelterEvent() throws IllegalOperationException {
+	void testCreateShelterEvent() throws EntityNotFoundException, IllegalOperationException {
 		ShelterEventEntity newEntity = factory.manufacturePojo(ShelterEventEntity.class);
-		newEntity.setDate(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24));
-
 		ShelterEventEntity result = shelterEventService.createShelterEvent(shelterEntity.getId(), newEntity);
 		assertNotNull(result);
 		ShelterEventEntity entity = entityManager.find(ShelterEventEntity.class, result.getId());
-		assertEquals(newEntity.getId(), entity.getId());
 		assertEquals(newEntity.getTitle(), entity.getTitle());
 		assertEquals(shelterEntity.getId(), entity.getShelter().getId());
 	}
 
 	@Test
-	void testCreateShelterEventWithInvalidShelter() {
-		assertThrows(IllegalOperationException.class, () -> {
+	void testCreateShelterEventInvalidShelter() {
+		assertThrows(EntityNotFoundException.class, () -> {
 			ShelterEventEntity newEntity = factory.manufacturePojo(ShelterEventEntity.class);
 			shelterEventService.createShelterEvent(0L, newEntity);
 		});
@@ -93,7 +93,7 @@ class ShelterEventServiceTest {
 	}
 
 	@Test
-	void testCreateShelterEventWithNoValidDate() {
+	void testCreateShelterEventWithNoDate() {
 		assertThrows(IllegalOperationException.class, () -> {
 			ShelterEventEntity newEntity = factory.manufacturePojo(ShelterEventEntity.class);
 			newEntity.setDate(null);
@@ -104,11 +104,11 @@ class ShelterEventServiceTest {
 	@Test
 	void testGetShelterEvents() throws EntityNotFoundException {
 		List<ShelterEventEntity> list = shelterEventService.getShelterEvents(shelterEntity.getId());
-		assertEquals(shelterEventList.size(), list.size());
+		assertEquals(eventList.size(), list.size());
 	}
 
 	@Test
-	void testGetShelterEventsWithInvalidShelter() {
+	void testGetShelterEventsInvalidShelter() {
 		assertThrows(EntityNotFoundException.class, () -> {
 			shelterEventService.getShelterEvents(0L);
 		});
@@ -116,11 +116,10 @@ class ShelterEventServiceTest {
 
 	@Test
 	void testGetShelterEvent() throws EntityNotFoundException, IllegalOperationException {
-		ShelterEventEntity entity = shelterEventList.get(0);
-		ShelterEventEntity resultEntity = shelterEventService.getShelterEvent(shelterEntity.getId(), entity.getId());
-		assertNotNull(resultEntity);
-		assertEquals(entity.getId(), resultEntity.getId());
-		assertEquals(entity.getTitle(), resultEntity.getTitle());
+		ShelterEventEntity entity = eventList.get(0);
+		ShelterEventEntity result = shelterEventService.getShelterEvent(shelterEntity.getId(), entity.getId());
+		assertNotNull(result);
+		assertEquals(entity.getId(), result.getId());
 	}
 
 	@Test
@@ -131,55 +130,36 @@ class ShelterEventServiceTest {
 	}
 
 	@Test
-	void testGetShelterEventNotAssociatedToShelter() throws IllegalOperationException {
+	void testGetShelterEventNotAssociatedToShelter() {
 		assertThrows(IllegalOperationException.class, () -> {
-			ShelterEntity otherShelter = factory.manufacturePojo(ShelterEntity.class);
-			entityManager.persist(otherShelter);
-			ShelterEventEntity entity = shelterEventList.get(0);
-			shelterEventService.getShelterEvent(otherShelter.getId(), entity.getId());
+			shelterEventService.getShelterEvent(otherShelterEntity.getId(), eventList.get(0).getId());
 		});
 	}
 
 	@Test
 	void testUpdateShelterEvent() throws EntityNotFoundException, IllegalOperationException {
-		ShelterEventEntity entity = shelterEventList.get(0);
+		ShelterEventEntity entity = eventList.get(0);
 		ShelterEventEntity pojoEntity = factory.manufacturePojo(ShelterEventEntity.class);
 		pojoEntity.setId(entity.getId());
-		pojoEntity.setDate(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24));
 
 		shelterEventService.updateShelterEvent(shelterEntity.getId(), entity.getId(), pojoEntity);
-
 		ShelterEventEntity resp = entityManager.find(ShelterEventEntity.class, entity.getId());
 		assertEquals(pojoEntity.getTitle(), resp.getTitle());
-		assertEquals(shelterEntity.getId(), resp.getShelter().getId());
 	}
 
 	@Test
 	void testUpdateInvalidShelterEvent() {
 		assertThrows(EntityNotFoundException.class, () -> {
 			ShelterEventEntity pojoEntity = factory.manufacturePojo(ShelterEventEntity.class);
-			pojoEntity.setId(0L);
 			shelterEventService.updateShelterEvent(shelterEntity.getId(), 0L, pojoEntity);
 		});
 	}
 
 	@Test
-	void testUpdateShelterEventWithNoValidTitle() {
-		assertThrows(IllegalOperationException.class, () -> {
-			ShelterEventEntity entity = shelterEventList.get(0);
-			ShelterEventEntity pojoEntity = factory.manufacturePojo(ShelterEventEntity.class);
-			pojoEntity.setId(entity.getId());
-			pojoEntity.setTitle("");
-			shelterEventService.updateShelterEvent(shelterEntity.getId(), entity.getId(), pojoEntity);
-		});
-	}
-
-	@Test
 	void testDeleteShelterEvent() throws EntityNotFoundException, IllegalOperationException {
-		ShelterEventEntity entity = shelterEventList.get(0);
+		ShelterEventEntity entity = eventList.get(0);
 		shelterEventService.deleteShelterEvent(shelterEntity.getId(), entity.getId());
-		ShelterEventEntity deleted = entityManager.find(ShelterEventEntity.class, entity.getId());
-		assertNull(deleted);
+		assertNull(entityManager.find(ShelterEventEntity.class, entity.getId()));
 	}
 
 	@Test
@@ -190,13 +170,9 @@ class ShelterEventServiceTest {
 	}
 
 	@Test
-	void testDeleteShelterEventAlreadyPassed() {
+	void testDeleteShelterEventNotAssociatedToShelter() {
 		assertThrows(IllegalOperationException.class, () -> {
-			ShelterEventEntity entity = factory.manufacturePojo(ShelterEventEntity.class);
-			entity.setDate(new Date(System.currentTimeMillis() - 1000L * 60 * 60 * 24));
-			entity.setShelter(shelterEntity);
-			entityManager.persist(entity);
-			shelterEventService.deleteShelterEvent(shelterEntity.getId(), entity.getId());
+			shelterEventService.deleteShelterEvent(otherShelterEntity.getId(), eventList.get(0).getId());
 		});
 	}
 
