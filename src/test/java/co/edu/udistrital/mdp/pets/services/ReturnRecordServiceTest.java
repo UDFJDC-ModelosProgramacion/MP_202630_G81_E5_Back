@@ -254,6 +254,8 @@ class ReturnRecordServiceTest {
 	void testDeleteReturnRecord() throws EntityNotFoundException {
 		Long returnRecordId = returnRecordEntity.getId();
 		returnRecordService.deleteReturnRecord(adoptionWithReturnRecord.getId());
+		// orphanRemoval solo se aplica al hacer flush, no al instante
+		entityManager.getEntityManager().flush();
 
 		assertNull(entityManager.find(ReturnRecordEntity.class, returnRecordId));
 		AdoptionEntity adoptionEntity = entityManager.find(AdoptionEntity.class, adoptionWithReturnRecord.getId());
