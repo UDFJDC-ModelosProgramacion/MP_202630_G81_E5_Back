@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class LifeEventService {
 
-    final LifeEventRepository lifeEventRepository;
+	final LifeEventRepository lifeEventRepository;
 
 	final PetRepository petRepository;
 
@@ -113,7 +113,11 @@ public class LifeEventService {
 			throws EntityNotFoundException, IllegalOperationException {
 		log.info("Starting process to delete life event with id = {0} of pet with id = " + petId, lifeEventId);
 		LifeEventEntity lifeEventEntity = getLifeEvent(petId, lifeEventId);
-		lifeEventRepository.deleteById(lifeEventEntity.getId());
+
+		PetEntity pet = lifeEventEntity.getPet();
+		pet.getLifeEvents().remove(lifeEventEntity);
+		petRepository.save(pet);
+
 		log.info("Finished process to delete life event with id = {0} of pet with id = " + petId, lifeEventId);
 	}
 
