@@ -123,20 +123,20 @@ class VaccinationRecordServiceTest {
     }
 
     @Test
-    void testGetVaccinationRecord() throws EntityNotFoundException, IllegalOperationException {
+    void testGetVaccinationRecord() throws EntityNotFoundException {
         PetEntity pet = petList.get(0);
 
-        VaccinationRecordEntity record = factory.manufacturePojo(VaccinationRecordEntity.class);
-        record.setVaccinesApplied("Rabia");
-        entityManager.persist(record);
+        VaccinationRecordEntity vaccinationRecord = factory.manufacturePojo(VaccinationRecordEntity.class);
+        vaccinationRecord.setVaccinesApplied("Rabia");
+        entityManager.persist(vaccinationRecord);
 
-        pet.setVaccinationRecord(record);
+        pet.setVaccinationRecord(vaccinationRecord);
         entityManager.persist(pet);
         entityManager.flush();
 
         VaccinationRecordEntity result = vaccinationRecordService.getVaccinationRecord(pet.getId());
         assertNotNull(result);
-        assertEquals(record.getId(), result.getId());
+        assertEquals(vaccinationRecord.getId(), result.getId());
         assertEquals("Rabia", result.getVaccinesApplied());
     }
 
@@ -159,11 +159,11 @@ class VaccinationRecordServiceTest {
     void testUpdateVaccinationRecord() throws EntityNotFoundException, IllegalOperationException {
         PetEntity pet = petList.get(0);
 
-        VaccinationRecordEntity record = factory.manufacturePojo(VaccinationRecordEntity.class);
-        record.setVaccinesApplied("Rabia");
-        entityManager.persist(record);
+        VaccinationRecordEntity vaccinationRecord = factory.manufacturePojo(VaccinationRecordEntity.class);
+        vaccinationRecord.setVaccinesApplied("Rabia");
+        entityManager.persist(vaccinationRecord);
 
-        pet.setVaccinationRecord(record);
+        pet.setVaccinationRecord(vaccinationRecord);
         entityManager.persist(pet);
         entityManager.flush();
 
@@ -172,7 +172,7 @@ class VaccinationRecordServiceTest {
 
         VaccinationRecordEntity result = vaccinationRecordService.updateVaccinationRecord(pet.getId(), pojoEntity);
         assertNotNull(result);
-        assertEquals(record.getId(), result.getId());
+        assertEquals(vaccinationRecord.getId(), result.getId());
         assertEquals("Moquillo", result.getVaccinesApplied());
     }
 
@@ -200,11 +200,11 @@ class VaccinationRecordServiceTest {
         assertThrows(IllegalOperationException.class, () -> {
             PetEntity pet = petList.get(0);
 
-            VaccinationRecordEntity record = factory.manufacturePojo(VaccinationRecordEntity.class);
-            record.setVaccinesApplied("Rabia");
-            entityManager.persist(record);
+            VaccinationRecordEntity vaccinationRecord = factory.manufacturePojo(VaccinationRecordEntity.class);
+            vaccinationRecord.setVaccinesApplied("Rabia");
+            entityManager.persist(vaccinationRecord);
 
-            pet.setVaccinationRecord(record);
+            pet.setVaccinationRecord(vaccinationRecord);
             entityManager.persist(pet);
             entityManager.flush();
 
@@ -218,15 +218,15 @@ class VaccinationRecordServiceTest {
     void testDeleteVaccinationRecord() throws EntityNotFoundException {
         PetEntity pet = petList.get(0);
 
-        VaccinationRecordEntity record = factory.manufacturePojo(VaccinationRecordEntity.class);
-        record.setVaccinesApplied("Rabia");
-        entityManager.persist(record);
+        VaccinationRecordEntity vaccinationRecord = factory.manufacturePojo(VaccinationRecordEntity.class);
+        vaccinationRecord.setVaccinesApplied("Rabia");
+        entityManager.persist(vaccinationRecord);
 
-        pet.setVaccinationRecord(record);
+        pet.setVaccinationRecord(vaccinationRecord);
         entityManager.persist(pet);
         entityManager.flush();
 
-        Long recordId = record.getId();
+        Long recordId = vaccinationRecord.getId();
 
         vaccinationRecordService.deleteVaccinationRecord(pet.getId());
 

@@ -3,6 +3,7 @@ package co.edu.udistrital.mdp.pets.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class PhotoService {
+
+	@Lazy 
+	private final PhotoService self;
 
 	final PhotoRepository photoRepository;
 
@@ -100,7 +104,7 @@ public class PhotoService {
 			throws EntityNotFoundException, IllegalOperationException {
 		log.info("Starting process to update photo with id = {0} of pet with id = " + petId, photoId);
 		PetEntity petEntity = validatePetExists(petId);
-		PhotoEntity existingPhoto = getPhotoByPet(petId, photoId);
+		PhotoEntity existingPhoto = self.getPhotoByPet(petId, photoId);
 
 		if (photo.getUrl() == null || photo.getUrl().isEmpty())
 			throw new IllegalOperationException(ErrorMessage.PHOTO_URL_NOT_VALID);
@@ -115,7 +119,7 @@ public class PhotoService {
 	@Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
 	public void deletePhotoByPet(Long petId, Long photoId) throws EntityNotFoundException, IllegalOperationException {
 		log.info("Starting process to delete photo with id = {0} of pet with id = " + petId, photoId);
-		PhotoEntity photoEntity = getPhotoByPet(petId, photoId);
+		PhotoEntity photoEntity = self.getPhotoByPet(petId, photoId);
 		photoRepository.deleteById(photoEntity.getId());
 		log.info("Finished process to delete photo with id = {0} of pet with id = " + petId, photoId);
 	}
@@ -161,7 +165,7 @@ public class PhotoService {
 		if (shelterOptional.isEmpty())
 			throw new EntityNotFoundException(ErrorMessage.SHELTER_NOT_FOUND);
 
-		PhotoEntity existingPhoto = getPhotoByShelter(shelterId, photoId);
+		PhotoEntity existingPhoto = self.getPhotoByShelter(shelterId, photoId);
 
 		if (photo.getUrl() == null || photo.getUrl().isEmpty())
 			throw new IllegalOperationException(ErrorMessage.PHOTO_URL_NOT_VALID);
@@ -177,7 +181,7 @@ public class PhotoService {
 	public void deletePhotoByShelter(Long shelterId, Long photoId)
 			throws EntityNotFoundException, IllegalOperationException {
 		log.info("Starting process to delete photo with id = {0} of shelter with id = " + shelterId, photoId);
-		PhotoEntity photoEntity = getPhotoByShelter(shelterId, photoId);
+		PhotoEntity photoEntity = self.getPhotoByShelter(shelterId, photoId);
 		photoRepository.deleteById(photoEntity.getId());
 		log.info("Finished process to delete photo with id = {0} of shelter with id = " + shelterId, photoId);
 	}

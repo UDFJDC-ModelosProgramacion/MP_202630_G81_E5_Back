@@ -26,7 +26,7 @@ public class PetEntity extends BaseEntity {
     private String size;
     private String temperament;
     private String specialNeeds;
-    public boolean available;
+    private boolean available;
 
     @ToString.Exclude 
     @PodamExclude
