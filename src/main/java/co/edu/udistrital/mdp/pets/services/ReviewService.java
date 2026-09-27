@@ -3,6 +3,7 @@ package co.edu.udistrital.mdp.pets.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ReviewService {
 
+	@Lazy 
+	private final ReviewService self;
 	final ReviewRepository reviewRepository;
 
 	final AdopterRepository adopterRepository;
@@ -76,7 +79,7 @@ public class ReviewService {
 	public ReviewEntity updateReview(Long adopterId, Long reviewId, ReviewEntity review)
 			throws EntityNotFoundException, IllegalOperationException {
 		log.info("Starting process to update review with id = {0} of adopter with id = " + adopterId, reviewId);
-		ReviewEntity existingReview = getReview(adopterId, reviewId);
+		ReviewEntity existingReview = self.getReview(adopterId, reviewId);
 
 		if (!validateRating(review.getRating()))
 			throw new IllegalOperationException(ErrorMessage.REVIEW_RATING_INVALID);
@@ -90,7 +93,7 @@ public class ReviewService {
 	@Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
 	public void deleteReview(Long adopterId, Long reviewId) throws EntityNotFoundException, IllegalOperationException {
 		log.info("Starting process to delete review with id = {0} of adopter with id = " + adopterId, reviewId);
-		ReviewEntity reviewEntity = getReview(adopterId, reviewId);
+		ReviewEntity reviewEntity = self.getReview(adopterId, reviewId);
 		reviewRepository.deleteById(reviewEntity.getId());
 		log.info("Finished process to delete review with id = {0} of adopter with id = " + adopterId, reviewId);
 	}

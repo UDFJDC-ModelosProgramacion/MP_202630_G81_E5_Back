@@ -4,6 +4,8 @@ package co.edu.udistrital.mdp.pets.services;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import co.edu.udistrital.mdp.pets.entities.NotificationEntity;
@@ -21,6 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service 
 public class NotificationService {
+
+    @Lazy 
+    private final NotificationService self;
 
     private static final List<String> VALID_CHANNELS = Arrays.asList("EMAIL", "SMS", "PUSH");
 
@@ -80,7 +85,7 @@ public class NotificationService {
     @Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
 	public NotificationEntity updateNotification(Long shelterId, Long notificationId, NotificationEntity notificationEntity) throws EntityNotFoundException, IllegalOperationException {
 		log.info("Starting process to update notification with id = ", notificationId);
-		NotificationEntity existingNotification = getNotification(shelterId, notificationId);
+		NotificationEntity existingNotification = self.getNotification(shelterId, notificationId);
 
 		if (!validateNotification(notificationEntity))
 			throw new IllegalOperationException(ErrorMessage.NOTIFICATION_NOT_VALID);
@@ -97,7 +102,7 @@ public class NotificationService {
     @Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
 	public void deleteNotification(Long shelterId, Long notificationId) throws EntityNotFoundException, IllegalOperationException {
 		log.info("Starting process to delete notification with id = ", notificationId);
-		NotificationEntity notificationEntity = getNotification(shelterId, notificationId);
+		NotificationEntity notificationEntity = self.getNotification(shelterId, notificationId);
 		notificationRepository.deleteById(notificationEntity.getId());
 		log.info("Finished process to delete notification with id = ", notificationId);
 	}
