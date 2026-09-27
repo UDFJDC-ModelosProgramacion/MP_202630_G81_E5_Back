@@ -9,6 +9,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import uk.co.jemos.podam.common.PodamExclude;
 
 @Data
@@ -22,11 +23,13 @@ public class LifeEventEntity extends BaseEntity {
     @Temporal(TemporalType.DATE)
     private Date date;
 
+    @ToString.Exclude 
     @PodamExclude
     @ManyToOne
     @JoinColumn(name = "pet_id")
     private PetEntity pet;
 
+    @ToString.Exclude 
     @PodamExclude
     @ManyToOne
     @JoinColumn(name = "veterinarian_id")
