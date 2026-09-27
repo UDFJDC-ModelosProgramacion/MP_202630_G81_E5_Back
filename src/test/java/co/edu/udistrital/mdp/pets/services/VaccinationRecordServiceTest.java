@@ -123,7 +123,7 @@ class VaccinationRecordServiceTest {
     }
 
     @Test
-    void testGetVaccinationRecord() throws EntityNotFoundException, IllegalOperationException {
+    void testGetVaccinationRecord() throws EntityNotFoundException {
         PetEntity pet = petList.get(0);
 
         VaccinationRecordEntity vaccinationRecord = factory.manufacturePojo(VaccinationRecordEntity.class);
