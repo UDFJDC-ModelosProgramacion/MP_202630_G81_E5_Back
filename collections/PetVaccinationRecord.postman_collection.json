@@ -1,0 +1,566 @@
+{
+    "info": {
+        "_postman_id": "32b801f4-d71b-44a2-b704-303c676456cb",
+        "name": "PetVaccinationRecord",
+        "description": "Asociacion 1-1 Pet - VaccinationRecord bajo /pets/{petId}/vaccinationRecord.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Crear el registro de vacunacion de una mascota",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/vaccinationRecord",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "vaccinationRecord"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-08-01\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [
+                {
+                    "name": "Crear el registro de vacunacion de una mascota",
+                    "originalRequest": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_1}}/vaccinationRecord",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_1}}",
+                                "vaccinationRecord"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-08-01\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "status": "Created",
+                    "code": 201,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"id\": 1,\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-08-01\",\n    \"pet\": {\n        \"id\": 1,\n        \"name\": \"Firulais\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Crear un registro de vacunacion para una mascota que ya tiene uno",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/vaccinationRecord",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "vaccinationRecord"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-08-01\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [
+                {
+                    "name": "Crear un registro de vacunacion para una mascota que ya tiene uno",
+                    "originalRequest": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_1}}/vaccinationRecord",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_1}}",
+                                "vaccinationRecord"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-08-01\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "status": "Precondition Failed",
+                    "code": 412,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"The pet already has an associated vaccination record\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Crear un registro de vacunacion sin vacunas aplicadas",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_2}}/vaccinationRecord",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_2}}",
+                        "vaccinationRecord"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"nextDueDate\": \"2027-08-01\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [
+                {
+                    "name": "Crear un registro de vacunacion sin vacunas aplicadas",
+                    "originalRequest": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_2}}/vaccinationRecord",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_2}}",
+                                "vaccinationRecord"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"nextDueDate\": \"2027-08-01\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "status": "Precondition Failed",
+                    "code": 412,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"Vaccination record data is not valid\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Obtener el registro de vacunacion de una mascota",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/vaccinationRecord",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "vaccinationRecord"
+                    ]
+                }
+            },
+            "response": [
+                {
+                    "name": "Obtener el registro de vacunacion de una mascota",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_1}}/vaccinationRecord",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_1}}",
+                                "vaccinationRecord"
+                            ]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"id\": 1,\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-08-01\",\n    \"pet\": {\n        \"id\": 1,\n        \"name\": \"Firulais\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Obtener el registro de vacunacion de una mascota que no tiene uno",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_2}}/vaccinationRecord",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_2}}",
+                        "vaccinationRecord"
+                    ]
+                }
+            },
+            "response": [
+                {
+                    "name": "Obtener el registro de vacunacion de una mascota que no tiene uno",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_2}}/vaccinationRecord",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_2}}",
+                                "vaccinationRecord"
+                            ]
+                        }
+                    },
+                    "status": "Not Found",
+                    "code": 404,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"The pet does not have an associated vaccination record\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Editar el registro de vacunacion de una mascota",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/vaccinationRecord",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "vaccinationRecord"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-12-01\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [
+                {
+                    "name": "Editar el registro de vacunacion de una mascota",
+                    "originalRequest": {
+                        "method": "PUT",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_1}}/vaccinationRecord",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_1}}",
+                                "vaccinationRecord"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-12-01\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"id\": 1,\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-12-01\",\n    \"pet\": {\n        \"id\": 1,\n        \"name\": \"Firulais\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Editar un registro de vacunacion que no existe",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_2}}/vaccinationRecord",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_2}}",
+                        "vaccinationRecord"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-08-01\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [
+                {
+                    "name": "Editar un registro de vacunacion que no existe",
+                    "originalRequest": {
+                        "method": "PUT",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_2}}/vaccinationRecord",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_2}}",
+                                "vaccinationRecord"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-08-01\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "status": "Not Found",
+                    "code": 404,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"The pet does not have an associated vaccination record\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Borrar el registro de vacunacion de una mascota",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/vaccinationRecord",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "vaccinationRecord"
+                    ]
+                }
+            },
+            "response": [
+                {
+                    "name": "Borrar el registro de vacunacion de una mascota",
+                    "originalRequest": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_1}}/vaccinationRecord",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_1}}",
+                                "vaccinationRecord"
+                            ]
+                        }
+                    },
+                    "status": "No Content",
+                    "code": 204,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": ""
+                }
+            ]
+        },
+        {
+            "name": "Borrar un registro de vacunacion que no existe",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_2}}/vaccinationRecord",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_2}}",
+                        "vaccinationRecord"
+                    ]
+                }
+            },
+            "response": [
+                {
+                    "name": "Borrar un registro de vacunacion que no existe",
+                    "originalRequest": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_2}}/vaccinationRecord",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_2}}",
+                                "vaccinationRecord"
+                            ]
+                        }
+                    },
+                    "status": "Not Found",
+                    "code": 404,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"The pet does not have an associated vaccination record\"\n    }\n}"
+                }
+            ]
+        }
+    ]
+}

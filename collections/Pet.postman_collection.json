@@ -1,0 +1,870 @@
+{
+    "info": {
+        "_postman_id": "9f53594c-8aaf-47c7-b7e9-54f1abcdebc0",
+        "name": "Pet",
+        "description": "CRUD del recurso raiz Pet (/pets). Requiere un refugio (shelter) existente.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Crear una mascota",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [
+                {
+                    "name": "Crear una mascota",
+                    "originalRequest": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "status": "Created",
+                    "code": 201,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"id\": 1,\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": 1,\n        \"name\": \"Refugio Patitas Felices\",\n        \"city\": \"Bogota\"\n    },\n    \"vaccinationRecord\": null,\n    \"adoptions\": [],\n    \"lifeEvents\": [],\n    \"photos\": []\n}"
+                }
+            ]
+        },
+        {
+            "name": "Crear una mascota sin refugio",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [
+                {
+                    "name": "Crear una mascota sin refugio",
+                    "originalRequest": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "status": "Precondition Failed",
+                    "code": 412,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"Shelter is not valid\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Crear una mascota en un refugio que no existe",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": 0\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [
+                {
+                    "name": "Crear una mascota en un refugio que no existe",
+                    "originalRequest": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": 0\n    }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "status": "Precondition Failed",
+                    "code": 412,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"Shelter is not valid\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Crear una mascota con edad negativa",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": -1,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [
+                {
+                    "name": "Crear una mascota con edad negativa",
+                    "originalRequest": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": -1,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "status": "Precondition Failed",
+                    "code": 412,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"Pet age must be zero or a positive number\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Obtener todas las mascotas",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets"
+                    ]
+                }
+            },
+            "response": [
+                {
+                    "name": "Obtener todas las mascotas",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets"
+                            ]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "[\n    {\n        \"id\": 1,\n        \"name\": \"Firulais\",\n        \"species\": \"Perro\",\n        \"breed\": \"Criollo\",\n        \"age\": 3,\n        \"sex\": \"Macho\",\n        \"size\": \"Mediano\",\n        \"temperament\": \"Juguetón\",\n        \"specialNeeds\": \"Ninguna\",\n        \"available\": true,\n        \"shelter\": {\n            \"id\": 1,\n            \"name\": \"Refugio Patitas Felices\",\n            \"city\": \"Bogota\"\n        },\n        \"vaccinationRecord\": null,\n        \"adoptions\": [],\n        \"lifeEvents\": [],\n        \"photos\": []\n    }\n]"
+                }
+            ]
+        },
+        {
+            "name": "Obtener mascotas filtradas por especie",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets?species=Perro",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets"
+                    ],
+                    "query": [
+                        {
+                            "key": "species",
+                            "value": "Perro"
+                        }
+                    ]
+                }
+            },
+            "response": [
+                {
+                    "name": "Obtener mascotas filtradas por especie",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets"
+                            ]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "[\n    {\n        \"id\": 1,\n        \"name\": \"Firulais\",\n        \"species\": \"Perro\",\n        \"breed\": \"Criollo\",\n        \"age\": 3,\n        \"sex\": \"Macho\",\n        \"size\": \"Mediano\",\n        \"temperament\": \"Juguetón\",\n        \"specialNeeds\": \"Ninguna\",\n        \"available\": true,\n        \"shelter\": {\n            \"id\": 1,\n            \"name\": \"Refugio Patitas Felices\",\n            \"city\": \"Bogota\"\n        },\n        \"vaccinationRecord\": null,\n        \"adoptions\": [],\n        \"lifeEvents\": [],\n        \"photos\": []\n    }\n]"
+                }
+            ]
+        },
+        {
+            "name": "Obtener una mascota",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}"
+                    ]
+                }
+            },
+            "response": [
+                {
+                    "name": "Obtener una mascota",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_1}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_1}}"
+                            ]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"id\": 1,\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": 1,\n        \"name\": \"Refugio Patitas Felices\",\n        \"city\": \"Bogota\"\n    },\n    \"vaccinationRecord\": null,\n    \"adoptions\": [],\n    \"lifeEvents\": [],\n    \"photos\": []\n}"
+                }
+            ]
+        },
+        {
+            "name": "Obtener una mascota que no existe",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/0",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "0"
+                    ]
+                }
+            },
+            "response": [
+                {
+                    "name": "Obtener una mascota que no existe",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/0",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "0"
+                            ]
+                        }
+                    },
+                    "status": "Not Found",
+                    "code": 404,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"The pet with the given id was not found\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Editar una mascota",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 4,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [
+                {
+                    "name": "Editar una mascota",
+                    "originalRequest": {
+                        "method": "PUT",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_1}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_1}}"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 4,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"id\": 1,\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 4,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": 1,\n        \"name\": \"Refugio Patitas Felices\",\n        \"city\": \"Bogota\"\n    },\n    \"vaccinationRecord\": null,\n    \"adoptions\": [],\n    \"lifeEvents\": [],\n    \"photos\": []\n}"
+                }
+            ]
+        },
+        {
+            "name": "Editar una mascota que no existe",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/0",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "0"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [
+                {
+                    "name": "Editar una mascota que no existe",
+                    "originalRequest": {
+                        "method": "PUT",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/0",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "0"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "status": "Not Found",
+                    "code": 404,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"The pet with the given id was not found\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Editar una mascota con edad negativa",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": -2,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [
+                {
+                    "name": "Editar una mascota con edad negativa",
+                    "originalRequest": {
+                        "method": "PUT",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_1}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_1}}"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": -2,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "status": "Precondition Failed",
+                    "code": 412,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"Pet age must be zero or a positive number\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Borrar una mascota",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_2}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_2}}"
+                    ]
+                }
+            },
+            "response": [
+                {
+                    "name": "Borrar una mascota",
+                    "originalRequest": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_2}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_2}}"
+                            ]
+                        }
+                    },
+                    "status": "No Content",
+                    "code": 204,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": ""
+                }
+            ]
+        },
+        {
+            "name": "Borrar una mascota que no existe",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/0",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "0"
+                    ]
+                }
+            },
+            "response": [
+                {
+                    "name": "Borrar una mascota que no existe",
+                    "originalRequest": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/0",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "0"
+                            ]
+                        }
+                    },
+                    "status": "Not Found",
+                    "code": 404,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"The pet with the given id was not found\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Borrar una mascota con adopciones asociadas",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_adopted}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_adopted}}"
+                    ]
+                }
+            },
+            "response": [
+                {
+                    "name": "Borrar una mascota con adopciones asociadas",
+                    "originalRequest": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_adopted}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_adopted}}"
+                            ]
+                        }
+                    },
+                    "status": "Precondition Failed",
+                    "code": 412,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"Unable to delete the pet because it has associated adoptions\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Borrar una mascota con fotos asociadas",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_with_history}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_with_history}}"
+                    ]
+                }
+            },
+            "response": [
+                {
+                    "name": "Borrar una mascota con fotos asociadas",
+                    "originalRequest": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_with_history}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_with_history}}"
+                            ]
+                        }
+                    },
+                    "status": "Precondition Failed",
+                    "code": 412,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"Unable to delete the pet because it has associated photos\"\n    }\n}"
+                }
+            ]
+        }
+    ]
+}

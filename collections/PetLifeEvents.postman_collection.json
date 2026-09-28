@@ -1,0 +1,750 @@
+{
+    "info": {
+        "_postman_id": "2d613664-f353-44c9-af4b-261d89f92813",
+        "name": "PetLifeEvents",
+        "description": "Asociacion Pet - LifeEvent (creacion y consulta anidadas bajo /pets/{petId}/lifeEvents).",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Crear un evento de vida a una mascota",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "lifeEvents"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"type\": \"Chequeo general\",\n    \"description\": \"Revision anual de rutina\",\n    \"date\": \"2026-08-01\",\n    \"veterinarian\": {\n        \"id\": \"{{veterinarian_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [
+                {
+                    "name": "Crear un evento de vida a una mascota",
+                    "originalRequest": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_1}}",
+                                "lifeEvents"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"type\": \"Chequeo general\",\n    \"description\": \"Revision anual de rutina\",\n    \"date\": \"2026-08-01\",\n    \"veterinarian\": {\n        \"id\": \"{{veterinarian_id_1}}\"\n    }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "status": "Created",
+                    "code": 201,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"id\": 1,\n    \"type\": \"Chequeo general\",\n    \"description\": \"Revision anual de rutina\",\n    \"date\": \"2026-08-01\",\n    \"pet\": {\n        \"id\": 1,\n        \"name\": \"Firulais\"\n    },\n    \"veterinarian\": {\n        \"id\": 1,\n        \"name\": \"Dr. Carlos Ramirez\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Crear un evento de vida a una mascota que no existe",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/0/lifeEvents",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "0",
+                        "lifeEvents"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"type\": \"Chequeo general\",\n    \"description\": \"Revision anual de rutina\",\n    \"date\": \"2026-08-01\",\n    \"veterinarian\": {\n        \"id\": \"{{veterinarian_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [
+                {
+                    "name": "Crear un evento de vida a una mascota que no existe",
+                    "originalRequest": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/0/lifeEvents",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "0",
+                                "lifeEvents"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"type\": \"Chequeo general\",\n    \"description\": \"Revision anual de rutina\",\n    \"date\": \"2026-08-01\",\n    \"veterinarian\": {\n        \"id\": \"{{veterinarian_id_1}}\"\n    }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "status": "Not Found",
+                    "code": 404,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"The pet with the given id was not found\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Crear un evento de vida sin tipo",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "lifeEvents"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"description\": \"Revision anual de rutina\",\n    \"date\": \"2026-08-01\",\n    \"veterinarian\": {\n        \"id\": \"{{veterinarian_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [
+                {
+                    "name": "Crear un evento de vida sin tipo",
+                    "originalRequest": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_1}}",
+                                "lifeEvents"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"description\": \"Revision anual de rutina\",\n    \"date\": \"2026-08-01\",\n    \"veterinarian\": {\n        \"id\": \"{{veterinarian_id_1}}\"\n    }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "status": "Precondition Failed",
+                    "code": 412,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"Life event data is not valid\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Crear un evento de vida con un veterinario que no existe",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "lifeEvents"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"type\": \"Chequeo general\",\n    \"description\": \"Revision anual de rutina\",\n    \"date\": \"2026-08-01\",\n    \"veterinarian\": {\n        \"id\": 0\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [
+                {
+                    "name": "Crear un evento de vida con un veterinario que no existe",
+                    "originalRequest": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_1}}",
+                                "lifeEvents"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"type\": \"Chequeo general\",\n    \"description\": \"Revision anual de rutina\",\n    \"date\": \"2026-08-01\",\n    \"veterinarian\": {\n        \"id\": 0\n    }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "status": "Not Found",
+                    "code": 404,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"The veterinarian with the given id was not found\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Obtener los eventos de vida de una mascota",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "lifeEvents"
+                    ]
+                }
+            },
+            "response": [
+                {
+                    "name": "Obtener los eventos de vida de una mascota",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_1}}",
+                                "lifeEvents"
+                            ]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "[\n    {\n        \"id\": 1,\n        \"type\": \"Chequeo general\",\n        \"description\": \"Revision anual de rutina\",\n        \"date\": \"2026-08-01\",\n        \"pet\": {\n            \"id\": 1,\n            \"name\": \"Firulais\"\n        },\n        \"veterinarian\": null\n    }\n]"
+                }
+            ]
+        },
+        {
+            "name": "Obtener un evento de vida de una mascota",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents/{{life_event_id_1}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "lifeEvents",
+                        "{{life_event_id_1}}"
+                    ]
+                }
+            },
+            "response": [
+                {
+                    "name": "Obtener un evento de vida de una mascota",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents/{{life_event_id_1}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_1}}",
+                                "lifeEvents",
+                                "{{life_event_id_1}}"
+                            ]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"id\": 1,\n    \"type\": \"Chequeo general\",\n    \"description\": \"Revision anual de rutina\",\n    \"date\": \"2026-08-01\",\n    \"pet\": {\n        \"id\": 1,\n        \"name\": \"Firulais\"\n    },\n    \"veterinarian\": null\n}"
+                }
+            ]
+        },
+        {
+            "name": "Obtener un evento de vida que no existe",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents/0",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "lifeEvents",
+                        "0"
+                    ]
+                }
+            },
+            "response": [
+                {
+                    "name": "Obtener un evento de vida que no existe",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents/0",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_1}}",
+                                "lifeEvents",
+                                "0"
+                            ]
+                        }
+                    },
+                    "status": "Not Found",
+                    "code": 404,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"The life event with the given id was not found\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Obtener un evento de vida que no esta asociado a la mascota",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_2}}/lifeEvents/{{life_event_id_1}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_2}}",
+                        "lifeEvents",
+                        "{{life_event_id_1}}"
+                    ]
+                }
+            },
+            "response": [
+                {
+                    "name": "Obtener un evento de vida que no esta asociado a la mascota",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_2}}/lifeEvents/{{life_event_id_1}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_2}}",
+                                "lifeEvents",
+                                "{{life_event_id_1}}"
+                            ]
+                        }
+                    },
+                    "status": "Precondition Failed",
+                    "code": 412,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"The life event is not associated to the pet\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Editar un evento de vida",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents/{{life_event_id_1}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "lifeEvents",
+                        "{{life_event_id_1}}"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"type\": \"Chequeo general\",\n    \"description\": \"Revision con hallazgos menores\",\n    \"date\": \"2026-08-01\",\n    \"veterinarian\": {\n        \"id\": \"{{veterinarian_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [
+                {
+                    "name": "Editar un evento de vida",
+                    "originalRequest": {
+                        "method": "PUT",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents/{{life_event_id_1}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_1}}",
+                                "lifeEvents",
+                                "{{life_event_id_1}}"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"type\": \"Chequeo general\",\n    \"description\": \"Revision con hallazgos menores\",\n    \"date\": \"2026-08-01\",\n    \"veterinarian\": {\n        \"id\": \"{{veterinarian_id_1}}\"\n    }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"id\": 1,\n    \"type\": \"Chequeo general\",\n    \"description\": \"Revision con hallazgos menores\",\n    \"date\": \"2026-08-01\",\n    \"pet\": {\n        \"id\": 1,\n        \"name\": \"Firulais\"\n    },\n    \"veterinarian\": null\n}"
+                }
+            ]
+        },
+        {
+            "name": "Editar un evento de vida que no existe",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents/0",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "lifeEvents",
+                        "0"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"type\": \"Chequeo general\",\n    \"description\": \"Revision anual de rutina\",\n    \"date\": \"2026-08-01\",\n    \"veterinarian\": {\n        \"id\": \"{{veterinarian_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [
+                {
+                    "name": "Editar un evento de vida que no existe",
+                    "originalRequest": {
+                        "method": "PUT",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents/0",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_1}}",
+                                "lifeEvents",
+                                "0"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"type\": \"Chequeo general\",\n    \"description\": \"Revision anual de rutina\",\n    \"date\": \"2026-08-01\",\n    \"veterinarian\": {\n        \"id\": \"{{veterinarian_id_1}}\"\n    }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "status": "Not Found",
+                    "code": 404,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"The life event with the given id was not found\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Borrar un evento de vida",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents/{{life_event_id_1}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "lifeEvents",
+                        "{{life_event_id_1}}"
+                    ]
+                }
+            },
+            "response": [
+                {
+                    "name": "Borrar un evento de vida",
+                    "originalRequest": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents/{{life_event_id_1}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_1}}",
+                                "lifeEvents",
+                                "{{life_event_id_1}}"
+                            ]
+                        }
+                    },
+                    "status": "No Content",
+                    "code": 204,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": ""
+                }
+            ]
+        },
+        {
+            "name": "Borrar un evento de vida que no existe",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents/0",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "lifeEvents",
+                        "0"
+                    ]
+                }
+            },
+            "response": [
+                {
+                    "name": "Borrar un evento de vida que no existe",
+                    "originalRequest": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents/0",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "{{pet_id_1}}",
+                                "lifeEvents",
+                                "0"
+                            ]
+                        }
+                    },
+                    "status": "Not Found",
+                    "code": 404,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"apierror\": {\n        \"status\": \"ERROR\",\n        \"timestamp\": \"21-09-2026 10:00:00\",\n        \"message\": \"The life event with the given id was not found\"\n    }\n}"
+                }
+            ]
+        }
+    ]
+}
