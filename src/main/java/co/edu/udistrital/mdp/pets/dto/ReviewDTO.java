@@ -1,5 +1,5 @@
 package co.edu.udistrital.mdp.pets.dto;
-
+ 
 import lombok.Data;
  
 
@@ -9,5 +9,6 @@ public class ReviewDTO {
 	private Long id;
 	private int rating;
 	private String comment;
+	private AdopterDTO adopter;
 }
  
