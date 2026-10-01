@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,21 +21,23 @@ import co.edu.udistrital.mdp.pets.entities.NotificationEntity;
 import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
 import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
 import co.edu.udistrital.mdp.pets.services.NotificationService;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Clase que implementa el recurso DEPENDIENTE "notifications", anidado bajo
  * "/shelters/{shelterId}/notifications" (no tiene endpoint raiz propio, igual
  * que se diseno en la coleccion Postman Notifications).
  */
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/shelters")
 public class NotificationController {
 
-	@Autowired
-	private NotificationService notificationService;
+	
+	private final NotificationService notificationService;
 
-	@Autowired
-	private ModelMapper modelMapper;
+	
+	private final ModelMapper modelMapper;
 
 	@GetMapping(value = "/{shelterId}/notifications")
 	@ResponseStatus(code = HttpStatus.OK)

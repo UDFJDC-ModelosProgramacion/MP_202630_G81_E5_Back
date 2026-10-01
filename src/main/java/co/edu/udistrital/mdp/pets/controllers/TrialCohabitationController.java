@@ -1,7 +1,6 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,21 +18,21 @@ import co.edu.udistrital.mdp.pets.entities.TrialCohabitationEntity;
 import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
 import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
 import co.edu.udistrital.mdp.pets.services.TrialCohabitationService;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Clase que implementa el recurso DEPENDIENTE y SINGULAR (relacion 1 a 1)
  * "trialCohabitation", anidado bajo "/adoptions/{adoptionId}/trialCohabitation".
  * Sin findAll: cada adoption tiene a lo sumo una trialCohabitation.
  */
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/adoptions")
 public class TrialCohabitationController {
 
-	@Autowired
-	private TrialCohabitationService trialCohabitationService;
-
-	@Autowired
-	private ModelMapper modelMapper;
+	
+	private final TrialCohabitationService trialCohabitationService;
+	private final ModelMapper modelMapper;
 
 	@GetMapping(value = "/{adoptionId}/trialCohabitation")
 	@ResponseStatus(code = HttpStatus.OK)

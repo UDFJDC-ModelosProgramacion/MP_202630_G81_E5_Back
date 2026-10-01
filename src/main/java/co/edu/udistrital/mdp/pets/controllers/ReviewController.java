@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,22 +22,22 @@ import co.edu.udistrital.mdp.pets.entities.ReviewEntity;
 import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
 import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
 import co.edu.udistrital.mdp.pets.services.ReviewService;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Clase que implementa el recurso DEPENDIENTE "reviews", anidado bajo
  * "/adopters/{adopterId}/reviews" (no tiene endpoint raíz propio, igual que
  * se diseñó en la colección Postman AdopterReview).
  */
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/adopters")
 
 public class ReviewController {
 
-	@Autowired
-	private ReviewService reviewService;
+	private final ReviewService reviewService;
 
-	@Autowired
-	private ModelMapper modelMapper;
+	private final ModelMapper modelMapper;
 
 	@GetMapping(value = "/{adopterId}/reviews")
 	@ResponseStatus(code = HttpStatus.OK)
