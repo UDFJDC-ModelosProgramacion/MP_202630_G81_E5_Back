@@ -1,0 +1,1062 @@
+{
+    "info": {
+        "_postman_id": "1fda982e-fedc-4cbb-9897-d63ebb802c3b",
+        "name": "Pet",
+        "description": "CRUD del recurso raiz Pet (/pets). Autocontenida: crea su propio shelter, veterinarian, adopter, adoption y photo de apoyo para probar las reglas de negocio.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Crear un refugio (setup)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/shelters",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "shelters"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Refugio Patitas Felices\",\n    \"city\": \"Bogota\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "description": "Setup: Pet requiere un shelter existente."
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "var data = pm.response.json();",
+                            "pm.globals.set(\"shelter_id_1\", data.id);",
+                            "pm.test(\"Status code is 201\", function () {",
+                            "   pm.response.to.have.status(201);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear un veterinario (setup)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/veterinarians",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "veterinarians"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Dr. Carlos Ramirez\",\n    \"email\": \"carlos.ramirez@example.com\",\n    \"phone\": \"3109876543\",\n    \"specialty\": \"Medicina general\",\n    \"availability\": \"Lunes a viernes\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "description": "Setup: para el caso 'borrar mascota con adopciones asociadas'."
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "var data = pm.response.json();",
+                            "pm.globals.set(\"veterinarian_id_1\", data.id);",
+                            "pm.test(\"Status code is 201\", function () {",
+                            "   pm.response.to.have.status(201);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear un adoptante (setup)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/adopters",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "adopters"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Maria Lopez\",\n    \"email\": \"maria.lopez.pet.setup@example.com\",\n    \"phone\": \"3001234567\",\n    \"address\": \"Calle 123 # 45-67, Bogota\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "description": "Setup: para el caso 'borrar mascota con adopciones asociadas'."
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "var data = pm.response.json();",
+                            "pm.globals.set(\"adopter_id_1\", data.id);",
+                            "pm.test(\"Status code is 201\", function () {",
+                            "   pm.response.to.have.status(201);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear una mascota",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "var data = pm.response.json();",
+                            "pm.globals.set(\"pet_id_1\", data.id);",
+                            "pm.test(\"Status code is 201\", function () {",
+                            "   pm.response.to.have.status(201);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear una segunda mascota (para editar/borrar)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Michi\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "var data = pm.response.json();",
+                            "pm.globals.set(\"pet_id_2\", data.id);",
+                            "pm.test(\"Status code is 201\", function () {",
+                            "   pm.response.to.have.status(201);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear una mascota para adoptar (setup adopcion)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Rocky\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "var data = pm.response.json();",
+                            "pm.globals.set(\"pet_id_for_adoption\", data.id);",
+                            "pm.test(\"Status code is 201\", function () {",
+                            "   pm.response.to.have.status(201);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear una mascota para asociarle una foto (setup foto)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Luna\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "var data = pm.response.json();",
+                            "pm.globals.set(\"pet_id_for_photo\", data.id);",
+                            "pm.test(\"Status code is 201\", function () {",
+                            "   pm.response.to.have.status(201);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear una mascota sin nombre",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 412\", function () {",
+                            "   pm.response.to.have.status(412);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"Pet data is not valid\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear una mascota sin refugio",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 412\", function () {",
+                            "   pm.response.to.have.status(412);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"Shelter is not valid\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear una mascota en un refugio que no existe",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": 0\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 412\", function () {",
+                            "   pm.response.to.have.status(412);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"Shelter is not valid\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear una mascota con edad negativa",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": -1,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 412\", function () {",
+                            "   pm.response.to.have.status(412);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"Pet age must be zero or a positive number\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Obtener todas las mascotas",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test('Number of items > 0', function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.length).to.greaterThan(0);",
+                            "});",
+                            "pm.test(\"Status code is 200\", function () {",
+                            "   pm.response.to.have.status(200);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Obtener una mascota",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "   pm.response.to.have.status(200);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Obtener una mascota que no existe",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/0",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "0"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 404\", function () {",
+                            "   pm.response.to.have.status(404);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"The pet with the given id was not found\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Editar una mascota",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_2}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_2}}"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Michi Editado\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 4,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "   pm.response.to.have.status(200);",
+                            "});",
+                            "pm.test(\"Name was updated\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.name).to.eql(\"Michi Editado\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Editar una mascota que no existe",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/0",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "0"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 404\", function () {",
+                            "   pm.response.to.have.status(404);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"The pet with the given id was not found\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Editar una mascota con edad negativa",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_2}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_2}}"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": -2,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 412\", function () {",
+                            "   pm.response.to.have.status(412);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"Pet age must be zero or a positive number\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Editar una mascota sin nombre",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_2}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_2}}"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 412\", function () {",
+                            "   pm.response.to.have.status(412);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"Pet data is not valid\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear una adopcion para bloquear el borrado (setup)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/adoptions",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "adoptions"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"date\": \"2026-09-20\",\n    \"pet\": {\n        \"id\": \"{{pet_id_for_adoption}}\"\n    },\n    \"adopter\": {\n        \"id\": \"{{adopter_id_1}}\"\n    },\n    \"responsibleVeterinarian\": {\n        \"id\": \"{{veterinarian_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "var data = pm.response.json();",
+                            "pm.globals.set(\"adoption_id_for_pet_block\", data.id);",
+                            "pm.test(\"Status code is 201\", function () {",
+                            "   pm.response.to.have.status(201);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear una foto para bloquear el borrado (setup)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/photos",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "photos"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"url\": \"https://res.cloudinary.com/pets/luna.jpg\",\n    \"pet\": {\n        \"id\": \"{{pet_id_for_photo}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "var data = pm.response.json();",
+                            "pm.globals.set(\"photo_id_for_pet_block\", data.id);",
+                            "pm.test(\"Status code is 201\", function () {",
+                            "   pm.response.to.have.status(201);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Borrar una mascota",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_2}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_2}}"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 204\", function () {",
+                            "   pm.response.to.have.status(204);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Borrar una mascota que no existe",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/0",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "0"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 404\", function () {",
+                            "   pm.response.to.have.status(404);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"The pet with the given id was not found\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Borrar una mascota con adopciones asociadas",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_for_adoption}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_for_adoption}}"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 412\", function () {",
+                            "   pm.response.to.have.status(412);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"Unable to delete the pet because it has associated adoptions\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Borrar una mascota con fotos asociadas",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_for_photo}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_for_photo}}"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 412\", function () {",
+                            "   pm.response.to.have.status(412);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"Unable to delete the pet because it has associated photos\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

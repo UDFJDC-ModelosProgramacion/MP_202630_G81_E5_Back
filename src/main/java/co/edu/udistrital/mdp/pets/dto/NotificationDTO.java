@@ -9,5 +9,5 @@ public class NotificationDTO {
     private String message;
     private Date date;
     private String channel;
-    // private ShelterDTO shelter;
+    private ShelterDTO shelter;
 }

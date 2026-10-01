@@ -3,6 +3,7 @@ package co.edu.udistrital.mdp.pets.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class VideoService {
+
+	@Lazy 
+	private final VideoService self;
 
 	final VideoRepository videoRepository;
 
@@ -77,7 +81,7 @@ public class VideoService {
 	public VideoEntity updateVideo(Long shelterId, Long videoId, VideoEntity video)
 			throws EntityNotFoundException, IllegalOperationException {
 		log.info("Starting process to update video with id = {0} of shelter with id = " + shelterId, videoId);
-		VideoEntity existingVideo = getVideo(shelterId, videoId);
+		VideoEntity existingVideo = self.getVideo(shelterId, videoId);
 
 		if (video.getUrl() == null || video.getUrl().isEmpty())
 			throw new IllegalOperationException(ErrorMessage.VIDEO_URL_NOT_VALID);
@@ -91,7 +95,7 @@ public class VideoService {
 	@Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
 	public void deleteVideo(Long shelterId, Long videoId) throws EntityNotFoundException, IllegalOperationException {
 		log.info("Starting process to delete video with id = {0} of shelter with id = " + shelterId, videoId);
-		VideoEntity videoEntity = getVideo(shelterId, videoId);
+		VideoEntity videoEntity = self.getVideo(shelterId, videoId);
 		videoRepository.deleteById(videoEntity.getId());
 		log.info("Finished process to delete video with id = {0} of shelter with id = " + shelterId, videoId);
 	}

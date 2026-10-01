@@ -112,21 +112,13 @@ class NotificationServiceTest {
 				() -> notificationService.createNotification(shelterEntity.getId(), newEntity));
 	}
 
-	@Test
-	void testCreateNotificationWithInvalidChannel() {
-		NotificationEntity newEntity = factory.manufacturePojo(NotificationEntity.class);
-		newEntity.setChannel("WHATSAPP");
-		assertThrows(IllegalOperationException.class,
-				() -> notificationService.createNotification(shelterEntity.getId(), newEntity));
-	}
-
-	@Test
-	void testCreateNotificationWithLowerCaseChannel() {
-	
-		NotificationEntity newEntity = factory.manufacturePojo(NotificationEntity.class);
-		newEntity.setChannel("email");
-		assertThrows(IllegalOperationException.class,
-				() -> notificationService.createNotification(shelterEntity.getId(), newEntity));
+	@ParameterizedTest
+	@ValueSource(strings = {"WHATSAPP", "email"})
+	void testCreateNotificationWithInvalidChannel(String channel) {
+    	NotificationEntity newEntity = factory.manufacturePojo(NotificationEntity.class);
+    	newEntity.setChannel(channel);
+    	assertThrows(IllegalOperationException.class,
+        	() -> notificationService.createNotification(shelterEntity.getId(), newEntity));
 	}
 
 	@Test
@@ -136,8 +128,6 @@ class NotificationServiceTest {
 		assertThrows(IllegalOperationException.class,
 				() -> notificationService.createNotification(shelterEntity.getId(), newEntity));
 	}
-
-
 
 	@Test
 	void testGetNotifications() throws EntityNotFoundException {

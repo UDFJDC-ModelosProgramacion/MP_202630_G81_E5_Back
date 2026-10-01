@@ -2,6 +2,8 @@ package co.edu.udistrital.mdp.pets.services;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import co.edu.udistrital.mdp.pets.entities.ShelterEntity;
@@ -19,7 +21,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class ShelterEventService {
-    final ShelterEventRepository shelterEventRepository;
+
+	@Lazy
+	private final ShelterEventService self;
+	
+	final ShelterEventRepository shelterEventRepository;
 
 	final ShelterRepository shelterRepository;
 
@@ -77,7 +83,7 @@ public class ShelterEventService {
 			throws EntityNotFoundException, IllegalOperationException {
 		log.info("Starting process to update shelter event with id = {0} of shelter with id = " + shelterId,
 				shelterEventId);
-		ShelterEventEntity existingShelterEvent = getShelterEvent(shelterId, shelterEventId);
+		ShelterEventEntity existingShelterEvent = self.getShelterEvent(shelterId, shelterEventId);
 
 		if (!validateShelterEvent(shelterEvent))
 			throw new IllegalOperationException(ErrorMessage.SHELTER_EVENT_NOT_VALID);
@@ -94,7 +100,7 @@ public class ShelterEventService {
 			throws EntityNotFoundException, IllegalOperationException {
 		log.info("Starting process to delete shelter event with id = {0} of shelter with id = " + shelterId,
 				shelterEventId);
-		ShelterEventEntity shelterEventEntity = getShelterEvent(shelterId, shelterEventId);
+		ShelterEventEntity shelterEventEntity = self.getShelterEvent(shelterId, shelterEventId);
 		shelterEventRepository.deleteById(shelterEventEntity.getId());
 		log.info("Finished process to delete shelter event with id = {0} of shelter with id = " + shelterId,
 				shelterEventId);

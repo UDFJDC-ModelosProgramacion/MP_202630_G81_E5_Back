@@ -3,6 +3,9 @@ package co.edu.udistrital.mdp.pets.services;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import co.edu.udistrital.mdp.pets.entities.AdopterEntity;
@@ -20,6 +23,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class MessageService {
+
+	
+	@Lazy
+	private final MessageService self;
+
     final MessageRepository messageRepository;
 
 	final AdopterRepository adopterRepository;
@@ -75,7 +83,7 @@ public class MessageService {
 	public MessageEntity updateMessage(Long adopterId, Long messageId, MessageEntity message)
 			throws EntityNotFoundException, IllegalOperationException {
 		log.info("Starting process to update message with id = {0} of adopter with id = " + adopterId, messageId);
-		MessageEntity existingMessage = getMessage(adopterId, messageId);
+		MessageEntity existingMessage = self.getMessage(adopterId, messageId);
 
 		if (!validateMessage(message))
 			throw new IllegalOperationException(ErrorMessage.MESSAGE_NOT_VALID);
@@ -90,7 +98,7 @@ public class MessageService {
 	public void deleteMessage(Long adopterId, Long messageId)
 			throws EntityNotFoundException, IllegalOperationException {
 		log.info("Starting process to delete message with id = {0} of adopter with id = " + adopterId, messageId);
-		MessageEntity messageEntity = getMessage(adopterId, messageId);
+		MessageEntity messageEntity = self.getMessage(adopterId, messageId);
 		messageRepository.deleteById(messageEntity.getId());
 		log.info("Finished process to delete message with id = {0} of adopter with id = " + adopterId, messageId);
 	}
