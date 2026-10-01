@@ -3,6 +3,8 @@ package co.edu.udistrital.mdp.pets.services;
 import java.util.List;
 import java.util.Optional;
 
+
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,10 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class LifeEventService {
 
+	
+	@Lazy
+	private final LifeEventService self;
+	
 	final LifeEventRepository lifeEventRepository;
 
 	final PetRepository petRepository;
@@ -89,7 +95,7 @@ public class LifeEventService {
 	public LifeEventEntity updateLifeEvent(Long petId, Long lifeEventId, LifeEventEntity lifeEvent)
 			throws EntityNotFoundException, IllegalOperationException {
 		log.info("Starting process to update life event with id = {0} of pet with id = " + petId, lifeEventId);
-		LifeEventEntity existingLifeEvent = getLifeEvent(petId, lifeEventId);
+		LifeEventEntity existingLifeEvent = self.getLifeEvent(petId, lifeEventId);
 
 		if (!validateLifeEvent(lifeEvent))
 			throw new IllegalOperationException(ErrorMessage.LIFE_EVENT_NOT_VALID);
@@ -112,7 +118,7 @@ public class LifeEventService {
 	public void deleteLifeEvent(Long petId, Long lifeEventId)
 			throws EntityNotFoundException, IllegalOperationException {
 		log.info("Starting process to delete life event with id = {0} of pet with id = " + petId, lifeEventId);
-		LifeEventEntity lifeEventEntity = getLifeEvent(petId, lifeEventId);
+		LifeEventEntity lifeEventEntity = self.getLifeEvent(petId, lifeEventId);
 
 		PetEntity pet = lifeEventEntity.getPet();
 		pet.getLifeEvents().remove(lifeEventEntity);

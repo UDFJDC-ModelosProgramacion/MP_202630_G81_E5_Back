@@ -53,7 +53,7 @@ public class VaccinationRecordService {
 	}
 
 	@Transactional(rollbackFor = { EntityNotFoundException.class, IllegalOperationException.class })
-	public VaccinationRecordEntity updateVaccinationRecord(Long petId, VaccinationRecordEntity record)
+	public VaccinationRecordEntity updateVaccinationRecord(Long petId, VaccinationRecordEntity vaccinationRecord)
 			throws EntityNotFoundException, IllegalOperationException {
 		log.info("Starting process to update vaccination record of pet with id = {0}", petId);
 		PetEntity petEntity = getPetOrThrow(petId);
@@ -61,11 +61,11 @@ public class VaccinationRecordService {
 		if (petEntity.getVaccinationRecord() == null)
 			throw new EntityNotFoundException(ErrorMessage.VACCINATION_RECORD_NOT_FOUND);
 
-		if (!validateVaccinationRecord(record))
+		if (!validateVaccinationRecord(vaccinationRecord))
 			throw new IllegalOperationException(ErrorMessage.VACCINATION_RECORD_NOT_VALID);
 
-		record.setId(petEntity.getVaccinationRecord().getId());
-		petEntity.setVaccinationRecord(record);
+		vaccinationRecord.setId(petEntity.getVaccinationRecord().getId());
+		petEntity.setVaccinationRecord(vaccinationRecord);
 		petRepository.save(petEntity);
 		log.info("Finished process to update vaccination record of pet with id = {0}", petId);
 		return petEntity.getVaccinationRecord();
@@ -91,7 +91,7 @@ public class VaccinationRecordService {
 		return petOptional.get();
 	}
 
-	private boolean validateVaccinationRecord(VaccinationRecordEntity record) {
-		return record.getVaccinesApplied() != null && !record.getVaccinesApplied().isEmpty();
+	private boolean validateVaccinationRecord(VaccinationRecordEntity vaccinationRecord) {
+		return vaccinationRecord.getVaccinesApplied() != null && !vaccinationRecord.getVaccinesApplied().isEmpty();
 	}
 }
