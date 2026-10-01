@@ -1,0 +1,1388 @@
+{
+    "info": {
+        "_postman_id": "8dddbf73-874b-4a7d-a8b9-a07e543497e4",
+        "name": "Photo",
+        "description": "Creacion en POST /photos (segun traiga pet o shelter en el body); consulta/edicion/borrado anidados en /pets/{petId}/photos y /shelters/{shelterId}/photos. Autocontenida.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Crear un refugio (setup)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/shelters",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "shelters"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Refugio Amigos Peludos\",\n    \"city\": \"Bogota\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "var data = pm.response.json();",
+                            "pm.globals.set(\"shelter_id_1\", data.id);",
+                            "pm.test(\"Status code is 201\", function () {",
+                            "   pm.response.to.have.status(201);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear un segundo refugio (setup, no asociado)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/shelters",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "shelters"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Refugio Segunda Oportunidad\",\n    \"city\": \"Medellin\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "var data = pm.response.json();",
+                            "pm.globals.set(\"shelter_id_2\", data.id);",
+                            "pm.test(\"Status code is 201\", function () {",
+                            "   pm.response.to.have.status(201);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear una mascota (setup)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Max\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 4,\n    \"sex\": \"Macho\",\n    \"size\": \"Grande\",\n    \"temperament\": \"Amigable\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "var data = pm.response.json();",
+                            "pm.globals.set(\"pet_id_1\", data.id);",
+                            "pm.test(\"Status code is 201\", function () {",
+                            "   pm.response.to.have.status(201);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear una segunda mascota (setup, no asociada)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Bella\",\n    \"species\": \"Gato\",\n    \"breed\": \"Criollo\",\n    \"age\": 2,\n    \"sex\": \"Hembra\",\n    \"size\": \"Pequeño\",\n    \"temperament\": \"Cariñosa\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "var data = pm.response.json();",
+                            "pm.globals.set(\"pet_id_2\", data.id);",
+                            "pm.test(\"Status code is 201\", function () {",
+                            "   pm.response.to.have.status(201);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear una foto de una mascota",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/photos",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "photos"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"url\": \"https://res.cloudinary.com/pets/max_1.jpg\",\n    \"pet\": {\n        \"id\": \"{{pet_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "var data = pm.response.json();",
+                            "pm.globals.set(\"photo_id_pet\", data.id);",
+                            "pm.test(\"Status code is 201\", function () {",
+                            "   pm.response.to.have.status(201);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear una foto de un refugio",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/photos",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "photos"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"url\": \"https://res.cloudinary.com/pets/refugio_1.jpg\",\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "var data = pm.response.json();",
+                            "pm.globals.set(\"photo_id_shelter\", data.id);",
+                            "pm.test(\"Status code is 201\", function () {",
+                            "   pm.response.to.have.status(201);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear una foto sin mascota ni refugio",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/photos",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "photos"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"url\": \"https://res.cloudinary.com/pets/huerfana.jpg\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 412\", function () {",
+                            "   pm.response.to.have.status(412);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"The photo must be associated to a pet or to a shelter\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear una foto sin url",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/photos",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "photos"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"pet\": {\n        \"id\": \"{{pet_id_1}}\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 412\", function () {",
+                            "   pm.response.to.have.status(412);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"Photo url is not valid\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear una foto de una mascota que no existe",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/photos",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "photos"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"url\": \"https://res.cloudinary.com/pets/x.jpg\",\n    \"pet\": {\n        \"id\": 0\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 404\", function () {",
+                            "   pm.response.to.have.status(404);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"The pet with the given id was not found\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Crear una foto de un refugio que no existe",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/photos",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "photos"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"url\": \"https://res.cloudinary.com/pets/x.jpg\",\n    \"shelter\": {\n        \"id\": 0\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 404\", function () {",
+                            "   pm.response.to.have.status(404);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"The shelter with the given id was not found\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Obtener las fotos de una mascota",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/photos",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "photos"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test('Number of items > 0', function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.length).to.greaterThan(0);",
+                            "});",
+                            "pm.test(\"Status code is 200\", function () {",
+                            "   pm.response.to.have.status(200);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Obtener las fotos de una mascota que no existe",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/0/photos",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "0",
+                        "photos"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 404\", function () {",
+                            "   pm.response.to.have.status(404);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"The pet with the given id was not found\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Obtener una foto de una mascota",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/photos/{{photo_id_pet}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "photos",
+                        "{{photo_id_pet}}"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "   pm.response.to.have.status(200);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Obtener una foto que no existe de una mascota",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/photos/0",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "photos",
+                        "0"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 404\", function () {",
+                            "   pm.response.to.have.status(404);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"The photo with the given id was not found\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Obtener una foto que no esta asociada a la mascota",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_2}}/photos/{{photo_id_pet}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_2}}",
+                        "photos",
+                        "{{photo_id_pet}}"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 412\", function () {",
+                            "   pm.response.to.have.status(412);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"The photo is not associated to the pet\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Editar una foto de una mascota",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/photos/{{photo_id_pet}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "photos",
+                        "{{photo_id_pet}}"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"url\": \"https://res.cloudinary.com/pets/max_2.jpg\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "   pm.response.to.have.status(200);",
+                            "});",
+                            "pm.test(\"Url was updated\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.url).to.eql(\"https://res.cloudinary.com/pets/max_2.jpg\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Editar una foto de una mascota que no existe",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/0/photos/{{photo_id_pet}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "0",
+                        "photos",
+                        "{{photo_id_pet}}"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"url\": \"https://res.cloudinary.com/pets/x.jpg\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 404\", function () {",
+                            "   pm.response.to.have.status(404);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"The pet with the given id was not found\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Editar una foto sin url",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/photos/{{photo_id_pet}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "photos",
+                        "{{photo_id_pet}}"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"url\": \"\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 412\", function () {",
+                            "   pm.response.to.have.status(412);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"Photo url is not valid\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Editar una foto que no esta asociada a la mascota",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_2}}/photos/{{photo_id_pet}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_2}}",
+                        "photos",
+                        "{{photo_id_pet}}"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"url\": \"https://res.cloudinary.com/pets/x.jpg\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 412\", function () {",
+                            "   pm.response.to.have.status(412);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"The photo is not associated to the pet\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Borrar una foto que no existe de una mascota",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/photos/0",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "photos",
+                        "0"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 404\", function () {",
+                            "   pm.response.to.have.status(404);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"The photo with the given id was not found\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Borrar una foto que no esta asociada a la mascota",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_2}}/photos/{{photo_id_pet}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_2}}",
+                        "photos",
+                        "{{photo_id_pet}}"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 412\", function () {",
+                            "   pm.response.to.have.status(412);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"The photo is not associated to the pet\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Borrar una foto de una mascota",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/pets/{{pet_id_1}}/photos/{{photo_id_pet}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "pets",
+                        "{{pet_id_1}}",
+                        "photos",
+                        "{{photo_id_pet}}"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 204\", function () {",
+                            "   pm.response.to.have.status(204);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Obtener las fotos de un refugio",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/shelters/{{shelter_id_1}}/photos",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "shelters",
+                        "{{shelter_id_1}}",
+                        "photos"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test('Number of items > 0', function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.length).to.greaterThan(0);",
+                            "});",
+                            "pm.test(\"Status code is 200\", function () {",
+                            "   pm.response.to.have.status(200);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Obtener las fotos de un refugio que no existe",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/shelters/0/photos",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "shelters",
+                        "0",
+                        "photos"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 404\", function () {",
+                            "   pm.response.to.have.status(404);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"The shelter with the given id was not found\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Obtener una foto de un refugio",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/shelters/{{shelter_id_1}}/photos/{{photo_id_shelter}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "shelters",
+                        "{{shelter_id_1}}",
+                        "photos",
+                        "{{photo_id_shelter}}"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "   pm.response.to.have.status(200);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Obtener una foto que no existe de un refugio",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/shelters/{{shelter_id_1}}/photos/0",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "shelters",
+                        "{{shelter_id_1}}",
+                        "photos",
+                        "0"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 404\", function () {",
+                            "   pm.response.to.have.status(404);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"The photo with the given id was not found\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Obtener una foto que no esta asociada al refugio",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/shelters/{{shelter_id_2}}/photos/{{photo_id_shelter}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "shelters",
+                        "{{shelter_id_2}}",
+                        "photos",
+                        "{{photo_id_shelter}}"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 412\", function () {",
+                            "   pm.response.to.have.status(412);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"The photo is not associated to the shelter\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Editar una foto de un refugio",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/shelters/{{shelter_id_1}}/photos/{{photo_id_shelter}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "shelters",
+                        "{{shelter_id_1}}",
+                        "photos",
+                        "{{photo_id_shelter}}"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"url\": \"https://res.cloudinary.com/pets/refugio_2.jpg\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "   pm.response.to.have.status(200);",
+                            "});",
+                            "pm.test(\"Url was updated\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.url).to.eql(\"https://res.cloudinary.com/pets/refugio_2.jpg\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Editar una foto de un refugio que no existe",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/shelters/0/photos/{{photo_id_shelter}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "shelters",
+                        "0",
+                        "photos",
+                        "{{photo_id_shelter}}"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"url\": \"https://res.cloudinary.com/pets/x.jpg\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 404\", function () {",
+                            "   pm.response.to.have.status(404);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"The shelter with the given id was not found\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Editar una foto que no esta asociada al refugio",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/shelters/{{shelter_id_2}}/photos/{{photo_id_shelter}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "shelters",
+                        "{{shelter_id_2}}",
+                        "photos",
+                        "{{photo_id_shelter}}"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"url\": \"https://res.cloudinary.com/pets/x.jpg\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 412\", function () {",
+                            "   pm.response.to.have.status(412);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"The photo is not associated to the shelter\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Borrar una foto que no esta asociada al refugio",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/shelters/{{shelter_id_2}}/photos/{{photo_id_shelter}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "shelters",
+                        "{{shelter_id_2}}",
+                        "photos",
+                        "{{photo_id_shelter}}"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 412\", function () {",
+                            "   pm.response.to.have.status(412);",
+                            "});",
+                            "var data = pm.response.json();",
+                            "pm.test(\"Get expected error message\", function () {",
+                            "   var data = pm.response.json();",
+                            "   pm.expect(data.apierror.message).to.eql(\"The photo is not associated to the shelter\");",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Borrar una foto de un refugio",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/shelters/{{shelter_id_1}}/photos/{{photo_id_shelter}}",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "shelters",
+                        "{{shelter_id_1}}",
+                        "photos",
+                        "{{photo_id_shelter}}"
+                    ]
+                }
+            },
+            "response": [],
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test(\"Status code is 204\", function () {",
+                            "   pm.response.to.have.status(204);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
