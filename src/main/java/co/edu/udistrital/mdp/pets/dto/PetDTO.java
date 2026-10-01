@@ -14,4 +14,5 @@ public class PetDTO {
 	private String temperament;
 	private String specialNeeds;
 	private boolean available;
+	private ShelterDTO shelter;
 }
