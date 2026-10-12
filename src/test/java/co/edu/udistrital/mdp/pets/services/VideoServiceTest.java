@@ -153,6 +153,17 @@ class VideoServiceTest {
 	}
 
 	@Test
+    void testGetVideoWithNullShelter() {
+        assertThrows(IllegalOperationException.class, () -> {
+            VideoEntity videoWithoutShelter = factory.manufacturePojo(VideoEntity.class);
+            videoWithoutShelter.setShelter(null);
+            entityManager.persist(videoWithoutShelter);
+
+            videoService.getVideo(shelterEntity.getId(), videoWithoutShelter.getId());
+        });
+    }
+	
+	@Test
 	void testGetVideoOfAnotherShelter() {
 		assertThrows(IllegalOperationException.class, () -> {
 			ShelterEntity otherShelter = factory.manufacturePojo(ShelterEntity.class);
