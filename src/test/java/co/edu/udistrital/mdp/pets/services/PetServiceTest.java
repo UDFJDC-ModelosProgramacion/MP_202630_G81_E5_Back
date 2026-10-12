@@ -112,6 +112,63 @@ class PetServiceTest {
 	}
 
 	@Test
+    void testCreatePetWithNullName() {
+        assertThrows(IllegalOperationException.class, () -> {
+            PetEntity newEntity = factory.manufacturePojo(PetEntity.class);
+            newEntity.setAge(1);
+            newEntity.setShelter(shelterEntity);
+            newEntity.setName(null);
+            petService.createPet(newEntity);
+        });
+    }
+
+    @Test
+    void testCreatePetWithNullSpecies() {
+        assertThrows(IllegalOperationException.class, () -> {
+            PetEntity newEntity = factory.manufacturePojo(PetEntity.class);
+            newEntity.setAge(1);
+            newEntity.setShelter(shelterEntity);
+            newEntity.setSpecies(null);
+            petService.createPet(newEntity);
+        });
+    }
+
+    @Test
+    void testCreatePetWithEmptySpecies() {
+        assertThrows(IllegalOperationException.class, () -> {
+            PetEntity newEntity = factory.manufacturePojo(PetEntity.class);
+            newEntity.setAge(1);
+            newEntity.setShelter(shelterEntity);
+            newEntity.setSpecies("");
+            petService.createPet(newEntity);
+        });
+    }
+
+    @Test
+    void testUpdatePetWithNullSpecies() {
+        assertThrows(IllegalOperationException.class, () -> {
+            PetEntity entity = petList.get(0);
+            PetEntity pojoEntity = factory.manufacturePojo(PetEntity.class);
+            pojoEntity.setId(entity.getId());
+            pojoEntity.setAge(1);
+            pojoEntity.setSpecies(null);
+            petService.updatePet(entity.getId(), pojoEntity);
+        });
+    }
+
+    @Test
+    void testUpdatePetWithEmptySpecies() {
+        assertThrows(IllegalOperationException.class, () -> {
+            PetEntity entity = petList.get(0);
+            PetEntity pojoEntity = factory.manufacturePojo(PetEntity.class);
+            pojoEntity.setId(entity.getId());
+            pojoEntity.setAge(1);
+            pojoEntity.setSpecies("");
+            petService.updatePet(entity.getId(), pojoEntity);
+        });
+    }
+
+	@Test
 	void testCreatePetWithNegativeAge() {
 		assertThrows(IllegalOperationException.class, () -> {
 			PetEntity newEntity = factory.manufacturePojo(PetEntity.class);
