@@ -118,7 +118,7 @@ class PhotoServiceTest {
 	}
 
 	@Test
-	void testCreatePhotoWithNoValidUrl() {
+	void testCreatePhotoWithEmptyUrl() {
 		assertThrows(IllegalOperationException.class, () -> {
 			PhotoEntity newEntity = factory.manufacturePojo(PhotoEntity.class);
 			newEntity.setPet(petEntity);
@@ -126,7 +126,18 @@ class PhotoServiceTest {
 			newEntity.setUrl("");
 			photoService.createPhoto(newEntity);
 		});
-	}
+	}//test cambiado
+
+	@Test 
+	void testCreatePhotoWithNullUrl() {
+		assertThrows(IllegalOperationException.class, () -> {
+			PhotoEntity newEntity = factory.manufacturePojo(PhotoEntity.class);
+			newEntity.setPet(petEntity);
+			newEntity.setShelter(null);
+			newEntity.setUrl(null);
+			photoService.createPhoto(newEntity);
+		});
+	}//test cambiado
 
 	@Test
 	void testCreatePhotoWithInvalidPet() {
@@ -208,7 +219,18 @@ class PhotoServiceTest {
 	}
 
 	@Test
-	void testUpdatePhotoByPetWithNoValidUrl() {
+	void testUpdatePhotoByPetWithEmptyUrl() {
+		assertThrows(IllegalOperationException.class, () -> {
+			PhotoEntity entity = petPhotoList.get(0);
+			PhotoEntity pojoEntity = factory.manufacturePojo(PhotoEntity.class);
+			pojoEntity.setId(entity.getId());
+			pojoEntity.setUrl("");
+			photoService.updatePhotoByPet(petEntity.getId(), entity.getId(), pojoEntity);
+		});
+	}//test cambiado
+
+	@Test 
+	void testUpdatePhotoByPetWithNullUrl() {
 		assertThrows(IllegalOperationException.class, () -> {
 			PhotoEntity entity = petPhotoList.get(0);
 			PhotoEntity pojoEntity = factory.manufacturePojo(PhotoEntity.class);
@@ -216,7 +238,7 @@ class PhotoServiceTest {
 			pojoEntity.setUrl(null);
 			photoService.updatePhotoByPet(petEntity.getId(), entity.getId(), pojoEntity);
 		});
-	}
+	}//test cambiado
 
 	@Test
 	void testDeletePhotoByPet() throws EntityNotFoundException, IllegalOperationException {
@@ -256,6 +278,20 @@ class PhotoServiceTest {
 	}
 
 	@Test
+	void testGetPhotoByInvalidShelter() {
+		assertThrows(EntityNotFoundException.class, () -> {
+			photoService.getPhotoByShelter(0L, shelterPhotoList.get(0).getId());
+		});
+	}
+
+	@Test
+	void testGetInvalidPhotoByShelter() {
+		assertThrows(EntityNotFoundException.class, () -> {
+			photoService.getPhotoByShelter(shelterEntity.getId(), 0L);
+		});
+	}
+
+	@Test
 	void testGetPhotoNotAssociatedToShelter() {
 		assertThrows(IllegalOperationException.class, () -> {
 			photoService.getPhotoByShelter(shelterEntity.getId(), petPhotoList.get(0).getId());
@@ -272,6 +308,35 @@ class PhotoServiceTest {
 		PhotoEntity resp = entityManager.find(PhotoEntity.class, entity.getId());
 		assertEquals(pojoEntity.getUrl(), resp.getUrl());
 	}
+
+	@Test
+	void testUpdatePhotoByInvalidShelter() {
+		assertThrows(EntityNotFoundException.class, () -> {
+			photoService.updatePhotoByShelter(0L, shelterPhotoList.get(0).getId(), factory.manufacturePojo(PhotoEntity.class));
+		});
+	}//Posible fallo
+
+	@Test
+	void testUpdatePhotoByShelterWithEmptyUrl() {
+		assertThrows(IllegalOperationException.class, () -> {
+			PhotoEntity entity = shelterPhotoList.get(0);
+			PhotoEntity pojoEntity = factory.manufacturePojo(PhotoEntity.class);
+			pojoEntity.setId(entity.getId());
+			pojoEntity.setUrl("");
+			photoService.updatePhotoByShelter(shelterEntity.getId(), entity.getId(), pojoEntity);
+		 });
+	}//test cambiado
+
+	@Test 
+	void testUpdatePhotoByShelterWithNullUrl() {
+		assertThrows(IllegalOperationException.class, () -> {
+			PhotoEntity entity = shelterPhotoList.get(0);
+			PhotoEntity pojoEntity = factory.manufacturePojo(PhotoEntity.class);
+			pojoEntity.setId(entity.getId());
+			pojoEntity.setUrl(null);
+			photoService.updatePhotoByShelter(shelterEntity.getId(), entity.getId(), pojoEntity);
+		});
+	}//test cambiado
 
 	@Test
 	void testDeletePhotoByShelter() throws EntityNotFoundException, IllegalOperationException {
