@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
+import co.edu.udistrital.mdp.pets.entities.PhotoEntity;
 import co.edu.udistrital.mdp.pets.entities.ShelterEntity;
 import co.edu.udistrital.mdp.pets.entities.VideoEntity;
 import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
@@ -94,6 +95,24 @@ class VideoServiceTest {
 	}
 
 	@Test
+	void testCreateVideoWithEmptyUrl() {
+		assertThrows(IllegalOperationException.class, () -> {
+			VideoEntity newEntity = factory.manufacturePojo(VideoEntity.class);
+			newEntity.setUrl("");
+			videoService.createVideo(shelterEntity.getId(), newEntity);
+		});
+	}
+
+	@Test 
+	void testCreateVideoWithNullUrl() {
+		assertThrows(IllegalOperationException.class, () -> {
+			VideoEntity newEntity = factory.manufacturePojo(VideoEntity.class);
+			newEntity.setUrl(null);
+			videoService.createVideo(shelterEntity.getId(), newEntity);
+		});
+	}
+
+	@Test
 	void testGetVideos() throws EntityNotFoundException {
 		List<VideoEntity> list = videoService.getVideos(shelterEntity.getId());
 		assertEquals(videoList.size(), list.size());
@@ -136,6 +155,20 @@ class VideoServiceTest {
 	}
 
 	@Test
+	void testGetVideoOfAnotherShelter() {
+		assertThrows(IllegalOperationException.class, () -> {
+			ShelterEntity otherShelter = factory.manufacturePojo(ShelterEntity.class);
+			entityManager.persist(otherShelter);
+
+			VideoEntity otherVideo = factory.manufacturePojo(VideoEntity.class);
+			otherVideo.setShelter(otherShelter);
+			entityManager.persist(otherVideo);
+
+			videoService.getVideo(shelterEntity.getId(), otherVideo.getId());
+		});
+	}
+
+	@Test
 	void testUpdateVideo() throws EntityNotFoundException, IllegalOperationException {
 		VideoEntity entity = videoList.get(0);
 		VideoEntity pojoEntity = factory.manufacturePojo(VideoEntity.class);
@@ -144,6 +177,24 @@ class VideoServiceTest {
 		videoService.updateVideo(shelterEntity.getId(), entity.getId(), pojoEntity);
 		VideoEntity resp = entityManager.find(VideoEntity.class, entity.getId());
 		assertEquals(pojoEntity.getUrl(), resp.getUrl());
+	}
+
+	@Test
+	void testUpdateVideoWithEmptyUrl() {
+		assertThrows(IllegalOperationException.class, () -> {
+			VideoEntity newEntity = factory.manufacturePojo(VideoEntity.class);
+			newEntity.setUrl("");
+			videoService.updateVideo(shelterEntity.getId(), videoList.get(0).getId(), newEntity);
+		});
+	}
+
+	@Test 
+	void testUpdateVideoWithNullUrl() {
+		assertThrows(IllegalOperationException.class, () -> {
+			VideoEntity newEntity = factory.manufacturePojo(VideoEntity.class);
+			newEntity.setUrl(null);
+			videoService.updateVideo(shelterEntity.getId(), videoList.get(0).getId(), newEntity);
+		});
 	}
 
 	@Test

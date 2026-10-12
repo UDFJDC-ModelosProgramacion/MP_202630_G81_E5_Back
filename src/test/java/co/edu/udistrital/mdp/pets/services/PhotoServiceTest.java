@@ -126,7 +126,7 @@ class PhotoServiceTest {
 			newEntity.setUrl("");
 			photoService.createPhoto(newEntity);
 		});
-	}//test cambiado
+	}
 
 	@Test 
 	void testCreatePhotoWithNullUrl() {
@@ -137,7 +137,7 @@ class PhotoServiceTest {
 			newEntity.setUrl(null);
 			photoService.createPhoto(newEntity);
 		});
-	}//test cambiado
+	}
 
 	@Test
 	void testCreatePhotoWithInvalidPet() {
@@ -208,6 +208,22 @@ class PhotoServiceTest {
 	}
 
 	@Test
+	void testGetPhotoOfAnotherPet() {
+		assertThrows(IllegalOperationException.class, () -> {
+			PetEntity otherPet = factory.manufacturePojo(PetEntity.class);
+			otherPet.setShelter(shelterEntity);
+			entityManager.persist(otherPet);
+
+			PhotoEntity otherPhoto = factory.manufacturePojo(PhotoEntity.class);
+			otherPhoto.setPet(otherPet);
+			otherPhoto.setShelter(null);
+			entityManager.persist(otherPhoto);
+
+			photoService.getPhotoByPet(petEntity.getId(), otherPhoto.getId());
+		});
+	}
+
+	@Test
 	void testUpdatePhotoByPet() throws EntityNotFoundException, IllegalOperationException {
 		PhotoEntity entity = petPhotoList.get(0);
 		PhotoEntity pojoEntity = factory.manufacturePojo(PhotoEntity.class);
@@ -227,7 +243,7 @@ class PhotoServiceTest {
 			pojoEntity.setUrl("");
 			photoService.updatePhotoByPet(petEntity.getId(), entity.getId(), pojoEntity);
 		});
-	}//test cambiado
+	}
 
 	@Test 
 	void testUpdatePhotoByPetWithNullUrl() {
@@ -238,7 +254,7 @@ class PhotoServiceTest {
 			pojoEntity.setUrl(null);
 			photoService.updatePhotoByPet(petEntity.getId(), entity.getId(), pojoEntity);
 		});
-	}//test cambiado
+	}
 
 	@Test
 	void testDeletePhotoByPet() throws EntityNotFoundException, IllegalOperationException {
@@ -299,6 +315,21 @@ class PhotoServiceTest {
 	}
 
 	@Test
+	void testGetPhotoOfAnotherShelter() {
+		assertThrows(IllegalOperationException.class, () -> {
+			ShelterEntity otherShelter = factory.manufacturePojo(ShelterEntity.class);
+			entityManager.persist(otherShelter);
+
+			PhotoEntity otherPhoto = factory.manufacturePojo(PhotoEntity.class);
+			otherPhoto.setShelter(otherShelter);
+			otherPhoto.setPet(null);
+			entityManager.persist(otherPhoto);
+
+			photoService.getPhotoByShelter(shelterEntity.getId(), otherPhoto.getId());
+		});
+	}
+
+	@Test
 	void testUpdatePhotoByShelter() throws EntityNotFoundException, IllegalOperationException {
 		PhotoEntity entity = shelterPhotoList.get(0);
 		PhotoEntity pojoEntity = factory.manufacturePojo(PhotoEntity.class);
@@ -314,7 +345,7 @@ class PhotoServiceTest {
 		assertThrows(EntityNotFoundException.class, () -> {
 			photoService.updatePhotoByShelter(0L, shelterPhotoList.get(0).getId(), factory.manufacturePojo(PhotoEntity.class));
 		});
-	}//Posible fallo
+	}
 
 	@Test
 	void testUpdatePhotoByShelterWithEmptyUrl() {
@@ -325,7 +356,7 @@ class PhotoServiceTest {
 			pojoEntity.setUrl("");
 			photoService.updatePhotoByShelter(shelterEntity.getId(), entity.getId(), pojoEntity);
 		 });
-	}//test cambiado
+	}
 
 	@Test 
 	void testUpdatePhotoByShelterWithNullUrl() {
@@ -336,7 +367,7 @@ class PhotoServiceTest {
 			pojoEntity.setUrl(null);
 			photoService.updatePhotoByShelter(shelterEntity.getId(), entity.getId(), pojoEntity);
 		});
-	}//test cambiado
+	}
 
 	@Test
 	void testDeletePhotoByShelter() throws EntityNotFoundException, IllegalOperationException {
@@ -349,6 +380,14 @@ class PhotoServiceTest {
 	void testDeletePhotoNotAssociatedToShelter() {
 		assertThrows(IllegalOperationException.class, () -> {
 			photoService.deletePhotoByShelter(shelterEntity.getId(), petPhotoList.get(0).getId());
+		});
+	}
+
+	@Test
+	void testUpdatePhotoByInvalidPet() {
+		assertThrows(EntityNotFoundException.class, () -> {
+			PhotoEntity pojoEntity = factory.manufacturePojo(PhotoEntity.class);
+			photoService.updatePhotoByPet(0L, petPhotoList.get(0).getId(), pojoEntity);
 		});
 	}
 }
