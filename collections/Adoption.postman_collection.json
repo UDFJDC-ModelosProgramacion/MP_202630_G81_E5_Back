@@ -2,11 +2,246 @@
  "info": {
   "_postman_id": "a065398f-3c21-4e37-8bb9-9a4078b620cc",
   "name": "Adoption",
-  "description": "Diseño del recurso RAÍZ Adoption: /adoptions, /adoptions/{id}. Referencia a pet/adopter/responsibleVeterinarian por id en el body.\n\nPrerrequisitos (variables externas): {{pet_id_1}} debe ser un pet EXISTENTE y DISPONIBLE (available=true); {{adopter_id_1}} y {{veterinarian_id_1}} deben existir.\n\nIMPORTANTE - orden de ejecución: 'Crear una adopción' debe correr PRIMERO (consume pet_id_1, lo deja available=false, y captura adoption_id_1). El request 'Crear una adopción con un pet no disponible' reutiliza a propósito ese MISMO pet_id_1 ya no disponible. 'Borrar una adopción' debe ser el ÚLTIMO request porque borra adoption_id_1.",
+  "description": "Diseño del recurso RAÍZ Adoption: /adoptions, /adoptions/{id}. Referencia a pet/adopter/responsibleVeterinarian por id en el body.\n\nEsta colección es AUTOSUFICIENTE: los 5 primeros requests (setup) crean el refugio, el veterinario ({{veterinarian_id_1}}), el adoptante ({{adopter_id_1}}) y dos mascotas DISPONIBLES ({{pet_id_1}} y {{pet_id_4}}; dos distintas porque pet_id_1 queda available=false tras la primera adopción). Puede correrse sola con newman, sin depender de las colecciones Pet, Adopter ni Veterinarian.\n\nIMPORTANTE - orden de ejecución: 'Crear una adopción' consume pet_id_1 (lo deja available=false) y captura adoption_id_1; el request 'Crear una adopción con un pet no disponible' reutiliza a propósito ese MISMO pet_id_1 ya ocupado, por eso debe correr después. 'Borrar una adopción' debe ser el ÚLTIMO request porque borra adoption_id_1.",
   "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
   "_exporter_id": "25917488"
  },
  "item": [
+  {
+   "name": "Crear un refugio (setup)",
+   "event": [
+    {
+     "listen": "test",
+     "script": {
+      "type": "text/javascript",
+      "exec": [
+       "var data = pm.response.json();",
+       "pm.globals.set(\"shelter_id_adoption\", data.id);",
+       "pm.test(\"Status code is 201\", function () {",
+       "   pm.response.to.have.status(201);",
+       "});"
+      ]
+     }
+    }
+   ],
+   "request": {
+    "method": "POST",
+    "header": [
+     {
+      "key": "Content-Type",
+      "value": "application/json"
+     }
+    ],
+    "body": {
+     "mode": "raw",
+     "raw": "{\n    \"name\": \"Refugio Adopciones\",\n    \"city\": \"Bogota\"\n}",
+     "options": {
+      "raw": {
+       "language": "json"
+      }
+     }
+    },
+    "url": {
+     "raw": "{{baseUrl}}/shelters",
+     "host": [
+      "{{baseUrl}}"
+     ],
+     "path": [
+      "shelters"
+     ]
+    },
+    "description": "Setup: crea el refugio que necesitan las mascotas de esta colección. Captura shelter_id_adoption."
+   },
+   "response": []
+  },
+  {
+   "name": "Crear un veterinario (setup)",
+   "event": [
+    {
+     "listen": "test",
+     "script": {
+      "type": "text/javascript",
+      "exec": [
+       "var data = pm.response.json();",
+       "pm.globals.set(\"veterinarian_id_1\", data.id);",
+       "pm.test(\"Status code is 201\", function () {",
+       "   pm.response.to.have.status(201);",
+       "});"
+      ]
+     }
+    }
+   ],
+   "request": {
+    "method": "POST",
+    "header": [
+     {
+      "key": "Content-Type",
+      "value": "application/json"
+     }
+    ],
+    "body": {
+     "mode": "raw",
+     "raw": "{\n    \"name\": \"Dr. Andres Rios\",\n    \"email\": \"vet.adoption.{{$timestamp}}@example.com\",\n    \"phone\": \"3109876543\",\n    \"specialty\": \"Medicina general\",\n    \"availability\": \"Lunes a viernes\"\n}",
+     "options": {
+      "raw": {
+       "language": "json"
+      }
+     }
+    },
+    "url": {
+     "raw": "{{baseUrl}}/veterinarians",
+     "host": [
+      "{{baseUrl}}"
+     ],
+     "path": [
+      "veterinarians"
+     ]
+    },
+    "description": "Setup: crea el veterinario responsable. Email con {{$timestamp}} para que la colección se pueda volver a correr sin chocar con un email ya registrado. Captura veterinarian_id_1."
+   },
+   "response": []
+  },
+  {
+   "name": "Crear un adoptante (setup, adopter_id_1)",
+   "event": [
+    {
+     "listen": "test",
+     "script": {
+      "type": "text/javascript",
+      "exec": [
+       "var data = pm.response.json();",
+       "pm.globals.set(\"adopter_id_1\", data.id);",
+       "pm.test(\"Status code is 201\", function () {",
+       "   pm.response.to.have.status(201);",
+       "});"
+      ]
+     }
+    }
+   ],
+   "request": {
+    "method": "POST",
+    "header": [
+     {
+      "key": "Content-Type",
+      "value": "application/json"
+     }
+    ],
+    "body": {
+     "mode": "raw",
+     "raw": "{\n    \"name\": \"Laura Gomez\",\n    \"email\": \"adopter.adoption.adopter_id_1.{{$timestamp}}@example.com\",\n    \"phone\": \"3001234567\",\n    \"address\": \"Calle 45 # 12-30, Bogota\"\n}",
+     "options": {
+      "raw": {
+       "language": "json"
+      }
+     }
+    },
+    "url": {
+     "raw": "{{baseUrl}}/adopters",
+     "host": [
+      "{{baseUrl}}"
+     ],
+     "path": [
+      "adopters"
+     ]
+    },
+    "description": "Setup: crea un adoptante. Email con {{$timestamp}} para poder re-ejecutar la colección. Captura adopter_id_1."
+   },
+   "response": []
+  },
+  {
+   "name": "Crear una mascota disponible (setup, pet_id_1)",
+   "event": [
+    {
+     "listen": "test",
+     "script": {
+      "type": "text/javascript",
+      "exec": [
+       "var data = pm.response.json();",
+       "pm.globals.set(\"pet_id_1\", data.id);",
+       "pm.test(\"Status code is 201\", function () {",
+       "   pm.response.to.have.status(201);",
+       "});"
+      ]
+     }
+    }
+   ],
+   "request": {
+    "method": "POST",
+    "header": [
+     {
+      "key": "Content-Type",
+      "value": "application/json"
+     }
+    ],
+    "body": {
+     "mode": "raw",
+     "raw": "{\n    \"name\": \"Firulais\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_adoption}}\"\n    }\n}",
+     "options": {
+      "raw": {
+       "language": "json"
+      }
+     }
+    },
+    "url": {
+     "raw": "{{baseUrl}}/pets",
+     "host": [
+      "{{baseUrl}}"
+     ],
+     "path": [
+      "pets"
+     ]
+    },
+    "description": "Setup: crea una mascota con available=true, lista para ser adoptada. Captura pet_id_1."
+   },
+   "response": []
+  },
+  {
+   "name": "Crear una mascota disponible (setup, pet_id_4)",
+   "event": [
+    {
+     "listen": "test",
+     "script": {
+      "type": "text/javascript",
+      "exec": [
+       "var data = pm.response.json();",
+       "pm.globals.set(\"pet_id_4\", data.id);",
+       "pm.test(\"Status code is 201\", function () {",
+       "   pm.response.to.have.status(201);",
+       "});"
+      ]
+     }
+    }
+   ],
+   "request": {
+    "method": "POST",
+    "header": [
+     {
+      "key": "Content-Type",
+      "value": "application/json"
+     }
+    ],
+    "body": {
+     "mode": "raw",
+     "raw": "{\n    \"name\": \"Michi\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_adoption}}\"\n    }\n}",
+     "options": {
+      "raw": {
+       "language": "json"
+      }
+     }
+    },
+    "url": {
+     "raw": "{{baseUrl}}/pets",
+     "host": [
+      "{{baseUrl}}"
+     ],
+     "path": [
+      "pets"
+     ]
+    },
+    "description": "Setup: crea una mascota con available=true, lista para ser adoptada. Captura pet_id_4."
+   },
+   "response": []
+  },
   {
    "name": "Crear una adopción",
    "request": {
@@ -843,7 +1078,7 @@
       "adoptions"
      ]
     },
-    "description": "Reutiliza pet_id_1 A PROPÓSITO: ya quedó available=false tras 'Crear una adopción' (request 1). Por eso este request DEBE correr después de ese. -> 412 ADOPTION_PET_NOT_AVAILABLE.",
+    "description": "Reutiliza pet_id_1 A PROPÓSITO: ya quedó available=false tras 'Crear una adopción' (request 'Crear una adopción'). Por eso este request DEBE correr después de ese. -> 412 ADOPTION_PET_NOT_AVAILABLE.",
     "body": {
      "mode": "raw",
      "raw": "{\n    \"date\": \"2026-09-20\",\n    \"pet\": {\n        \"id\": \"{{pet_id_1}}\"\n    },\n    \"adopter\": {\n        \"id\": \"{{adopter_id_1}}\"\n    },\n    \"responsibleVeterinarian\": {\n        \"id\": \"{{veterinarian_id_1}}\"\n    }\n}",
@@ -1283,7 +1518,7 @@
        "});",
        "pm.test(\"Pet was not reassigned\", function () {",
        "   var data = pm.response.json();",
-       "   pm.expect(String(data.pet.id)).to.eql(pm.globals.get(\"pet_id_1\"));",
+       "   pm.expect(String(data.pet.id)).to.eql(String(pm.globals.get(\"pet_id_1\")));",
        "});"
       ]
      }
