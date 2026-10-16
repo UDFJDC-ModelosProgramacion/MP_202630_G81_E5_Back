@@ -42,6 +42,7 @@ public final class ErrorMessage {
 	public static final String MESSAGE_NOT_VALID = "Message data is not valid";
 	public static final String MESSAGE_DATE_INVALID = "Message sent date cannot be in the future";
 	public static final String MESSAGE_NOT_ASSOCIATED_TO_ADOPTER = "The message is not associated to the adopter";
+	public static final String MESSAGE_ALREADY_SENT = "The message was already sent and cannot be edited";
 
 	// Adopter
 	public static final String ADOPTER_NOT_FOUND = "The adopter with the given id was not found";
