@@ -157,14 +157,28 @@ class MessageServiceTest {
 	}
 
 	@Test
-	void testUpdateMessage() throws EntityNotFoundException, IllegalOperationException {
+	void testUpdateMessageAlreadySent() {
 		MessageEntity entity = messageList.get(0);
 		MessageEntity pojoEntity = factory.manufacturePojo(MessageEntity.class);
-		pojoEntity.setId(entity.getId());
 		pojoEntity.setSentDate(pastDate());
 
-		messageService.updateMessage(adopterEntity.getId(), entity.getId(), pojoEntity);
-		MessageEntity resp = entityManager.find(MessageEntity.class, entity.getId());
+		assertThrows(IllegalOperationException.class, () -> {
+			messageService.updateMessage(adopterEntity.getId(), entity.getId(), pojoEntity);
+		});
+	}
+
+	@Test
+	void testUpdateMessageNotYetSent() throws EntityNotFoundException, IllegalOperationException {
+		MessageEntity scheduledMessage = factory.manufacturePojo(MessageEntity.class);
+		scheduledMessage.setSentDate(futureDate());
+		scheduledMessage.setAdopter(adopterEntity);
+		entityManager.persist(scheduledMessage);
+
+		MessageEntity pojoEntity = factory.manufacturePojo(MessageEntity.class);
+		pojoEntity.setSentDate(pastDate());
+
+		messageService.updateMessage(adopterEntity.getId(), scheduledMessage.getId(), pojoEntity);
+		MessageEntity resp = entityManager.find(MessageEntity.class, scheduledMessage.getId());
 		assertEquals(pojoEntity.getContent(), resp.getContent());
 	}
 
