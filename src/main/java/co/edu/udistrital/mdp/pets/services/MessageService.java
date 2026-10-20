@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +23,10 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class MessageService {
 
-	
 	@Lazy
 	private final MessageService self;
 
-    final MessageRepository messageRepository;
+	final MessageRepository messageRepository;
 
 	final AdopterRepository adopterRepository;
 
@@ -84,6 +82,10 @@ public class MessageService {
 			throws EntityNotFoundException, IllegalOperationException {
 		log.info("Starting process to update message with id = {0} of adopter with id = " + adopterId, messageId);
 		MessageEntity existingMessage = self.getMessage(adopterId, messageId);
+
+		if (existingMessage.getSentDate() != null && !existingMessage.getSentDate().after(new Date())) {
+			throw new IllegalOperationException(ErrorMessage.MESSAGE_ALREADY_SENT);
+		}
 
 		if (!validateMessage(message))
 			throw new IllegalOperationException(ErrorMessage.MESSAGE_NOT_VALID);
