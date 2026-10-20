@@ -2,11 +2,246 @@
  "info": {
   "_postman_id": "6f712960-6341-411e-9ea0-c143a6fad5c4",
   "name": "AdoptionReturnRecord",
-  "description": "Diseño del recurso DEPENDIENTE ReturnRecord, singular (relación 1 a 1) bajo /adoptions/{adoptionId}/returnRecord.\n\nPrerrequisitos (variables externas): {{pet_id_2}} y {{pet_id_3}} deben ser pets EXISTENTES y DISPONIBLES; {{adopter_id_1}} y {{veterinarian_id_1}} deben existir.\n\nEsta colección crea sus PROPIAS adopciones de prueba (no depende de adoption_id_1 de la colección Adoption, que esa colección borra al final) para evitar dependencias frágiles entre colecciones. Genera dos: adoption_id_with_return_record (recibirá un returnRecord durante esta misma colección) y adoption_id_without_return_record (se queda sin uno para siempre, usada en los casos negativos). No reordenar los requests.",
+  "description": "Diseño del recurso DEPENDIENTE ReturnRecord, singular (relación 1 a 1) bajo /adoptions/{adoptionId}/returnRecord.\n\nEsta colección es AUTOSUFICIENTE: los 5 primeros requests (setup) crean el refugio, el veterinario ({{veterinarian_id_1}}), el adoptante ({{adopter_id_1}}) y dos mascotas DISPONIBLES ({{pet_id_2}} y {{pet_id_3}}). Puede correrse sola con newman, sin depender de las colecciones Pet, Adopter, Veterinarian ni Adoption.\n\nEsta colección crea sus PROPIAS adopciones de prueba (no depende de adoption_id_1 de la colección Adoption, que esa colección borra al final) para evitar dependencias frágiles entre colecciones. Genera dos: adoption_id_with_return_record (recibirá un returnRecord durante esta misma colección) y adoption_id_without_return_record (se queda sin uno para siempre, usada en los casos negativos). No reordenar los requests.",
   "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
   "_exporter_id": "25917488"
  },
  "item": [
+  {
+   "name": "Crear un refugio (setup)",
+   "event": [
+    {
+     "listen": "test",
+     "script": {
+      "type": "text/javascript",
+      "exec": [
+       "var data = pm.response.json();",
+       "pm.globals.set(\"shelter_id_return_record\", data.id);",
+       "pm.test(\"Status code is 201\", function () {",
+       "   pm.response.to.have.status(201);",
+       "});"
+      ]
+     }
+    }
+   ],
+   "request": {
+    "method": "POST",
+    "header": [
+     {
+      "key": "Content-Type",
+      "value": "application/json"
+     }
+    ],
+    "body": {
+     "mode": "raw",
+     "raw": "{\n    \"name\": \"Refugio Devoluciones\",\n    \"city\": \"Bogota\"\n}",
+     "options": {
+      "raw": {
+       "language": "json"
+      }
+     }
+    },
+    "url": {
+     "raw": "{{baseUrl}}/shelters",
+     "host": [
+      "{{baseUrl}}"
+     ],
+     "path": [
+      "shelters"
+     ]
+    },
+    "description": "Setup: crea el refugio que necesitan las mascotas de esta colección. Captura shelter_id_return_record."
+   },
+   "response": []
+  },
+  {
+   "name": "Crear un veterinario (setup)",
+   "event": [
+    {
+     "listen": "test",
+     "script": {
+      "type": "text/javascript",
+      "exec": [
+       "var data = pm.response.json();",
+       "pm.globals.set(\"veterinarian_id_1\", data.id);",
+       "pm.test(\"Status code is 201\", function () {",
+       "   pm.response.to.have.status(201);",
+       "});"
+      ]
+     }
+    }
+   ],
+   "request": {
+    "method": "POST",
+    "header": [
+     {
+      "key": "Content-Type",
+      "value": "application/json"
+     }
+    ],
+    "body": {
+     "mode": "raw",
+     "raw": "{\n    \"name\": \"Dr. Andres Rios\",\n    \"email\": \"vet.returnrecord.{{$timestamp}}@example.com\",\n    \"phone\": \"3109876543\",\n    \"specialty\": \"Medicina general\",\n    \"availability\": \"Lunes a viernes\"\n}",
+     "options": {
+      "raw": {
+       "language": "json"
+      }
+     }
+    },
+    "url": {
+     "raw": "{{baseUrl}}/veterinarians",
+     "host": [
+      "{{baseUrl}}"
+     ],
+     "path": [
+      "veterinarians"
+     ]
+    },
+    "description": "Setup: crea el veterinario responsable. Email con {{$timestamp}} para que la colección se pueda volver a correr sin chocar con un email ya registrado. Captura veterinarian_id_1."
+   },
+   "response": []
+  },
+  {
+   "name": "Crear un adoptante (setup, adopter_id_1)",
+   "event": [
+    {
+     "listen": "test",
+     "script": {
+      "type": "text/javascript",
+      "exec": [
+       "var data = pm.response.json();",
+       "pm.globals.set(\"adopter_id_1\", data.id);",
+       "pm.test(\"Status code is 201\", function () {",
+       "   pm.response.to.have.status(201);",
+       "});"
+      ]
+     }
+    }
+   ],
+   "request": {
+    "method": "POST",
+    "header": [
+     {
+      "key": "Content-Type",
+      "value": "application/json"
+     }
+    ],
+    "body": {
+     "mode": "raw",
+     "raw": "{\n    \"name\": \"Laura Gomez\",\n    \"email\": \"adopter.returnrecord.adopter_id_1.{{$timestamp}}@example.com\",\n    \"phone\": \"3001234567\",\n    \"address\": \"Calle 45 # 12-30, Bogota\"\n}",
+     "options": {
+      "raw": {
+       "language": "json"
+      }
+     }
+    },
+    "url": {
+     "raw": "{{baseUrl}}/adopters",
+     "host": [
+      "{{baseUrl}}"
+     ],
+     "path": [
+      "adopters"
+     ]
+    },
+    "description": "Setup: crea un adoptante. Email con {{$timestamp}} para poder re-ejecutar la colección. Captura adopter_id_1."
+   },
+   "response": []
+  },
+  {
+   "name": "Crear una mascota disponible (setup, pet_id_2)",
+   "event": [
+    {
+     "listen": "test",
+     "script": {
+      "type": "text/javascript",
+      "exec": [
+       "var data = pm.response.json();",
+       "pm.globals.set(\"pet_id_2\", data.id);",
+       "pm.test(\"Status code is 201\", function () {",
+       "   pm.response.to.have.status(201);",
+       "});"
+      ]
+     }
+    }
+   ],
+   "request": {
+    "method": "POST",
+    "header": [
+     {
+      "key": "Content-Type",
+      "value": "application/json"
+     }
+    ],
+    "body": {
+     "mode": "raw",
+     "raw": "{\n    \"name\": \"Rocky\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_return_record}}\"\n    }\n}",
+     "options": {
+      "raw": {
+       "language": "json"
+      }
+     }
+    },
+    "url": {
+     "raw": "{{baseUrl}}/pets",
+     "host": [
+      "{{baseUrl}}"
+     ],
+     "path": [
+      "pets"
+     ]
+    },
+    "description": "Setup: crea una mascota con available=true, lista para ser adoptada. Captura pet_id_2."
+   },
+   "response": []
+  },
+  {
+   "name": "Crear una mascota disponible (setup, pet_id_3)",
+   "event": [
+    {
+     "listen": "test",
+     "script": {
+      "type": "text/javascript",
+      "exec": [
+       "var data = pm.response.json();",
+       "pm.globals.set(\"pet_id_3\", data.id);",
+       "pm.test(\"Status code is 201\", function () {",
+       "   pm.response.to.have.status(201);",
+       "});"
+      ]
+     }
+    }
+   ],
+   "request": {
+    "method": "POST",
+    "header": [
+     {
+      "key": "Content-Type",
+      "value": "application/json"
+     }
+    ],
+    "body": {
+     "mode": "raw",
+     "raw": "{\n    \"name\": \"Luna\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 3,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Juguetón\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_return_record}}\"\n    }\n}",
+     "options": {
+      "raw": {
+       "language": "json"
+      }
+     }
+    },
+    "url": {
+     "raw": "{{baseUrl}}/pets",
+     "host": [
+      "{{baseUrl}}"
+     ],
+     "path": [
+      "pets"
+     ]
+    },
+    "description": "Setup: crea una mascota con available=true, lista para ser adoptada. Captura pet_id_3."
+   },
+   "response": []
+  },
   {
    "name": "Crear una adopción (setup, para asociarle un return record)",
    "request": {

@@ -2,11 +2,105 @@
  "info": {
   "_postman_id": "fdccf71b-58b1-4eec-8dc0-1bf30a133a40",
   "name": "AdopterReview",
-  "description": "Diseño del recurso DEPENDIENTE Review, anidado bajo /adopters/{adopterId}/reviews (no tiene endpoint raíz propio).\n\nPrerrequisitos (variables externas, creadas por la colección Adopter): {{adopter_id_1}} y {{adopter_id_2}} deben ser ids de adoptantes ya existentes. adopter_id_2 se usa solo para el caso 'review no asociada al adoptante'.\n\nLas demás variables (review_id_1, review_id_other_adopter) las genera esta misma colección al correr los requests de creación, en el orden en que están listados: no reordenar los requests.",
+  "description": "Diseño del recurso DEPENDIENTE Review, anidado bajo /adopters/{adopterId}/reviews (no tiene endpoint raíz propio).\n\nEsta colección es AUTOSUFICIENTE: los 2 primeros requests (setup) crean los adoptantes {{adopter_id_1}} y {{adopter_id_2}} (adopter_id_2 se usa solo para el caso 'review no asociada al adoptante'), así que puede correrse sola con newman, sin depender de la colección Adopter.\n\nLas demás variables (review_id_1, review_id_other_adopter) las genera esta misma colección al correr los requests de creación, en el orden en que están listados: no reordenar los requests.",
   "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
   "_exporter_id": "25917488"
  },
  "item": [
+  {
+   "name": "Crear un adoptante (setup, adopter_id_1)",
+   "event": [
+    {
+     "listen": "test",
+     "script": {
+      "type": "text/javascript",
+      "exec": [
+       "var data = pm.response.json();",
+       "pm.globals.set(\"adopter_id_1\", data.id);",
+       "pm.test(\"Status code is 201\", function () {",
+       "   pm.response.to.have.status(201);",
+       "});"
+      ]
+     }
+    }
+   ],
+   "request": {
+    "method": "POST",
+    "header": [
+     {
+      "key": "Content-Type",
+      "value": "application/json"
+     }
+    ],
+    "body": {
+     "mode": "raw",
+     "raw": "{\n    \"name\": \"Laura Gomez\",\n    \"email\": \"adopter.review.adopter_id_1.{{$timestamp}}@example.com\",\n    \"phone\": \"3001234567\",\n    \"address\": \"Calle 45 # 12-30, Bogota\"\n}",
+     "options": {
+      "raw": {
+       "language": "json"
+      }
+     }
+    },
+    "url": {
+     "raw": "{{baseUrl}}/adopters",
+     "host": [
+      "{{baseUrl}}"
+     ],
+     "path": [
+      "adopters"
+     ]
+    },
+    "description": "Setup: crea un adoptante. Email con {{$timestamp}} para poder re-ejecutar la colección. Captura adopter_id_1."
+   },
+   "response": []
+  },
+  {
+   "name": "Crear un adoptante (setup, adopter_id_2)",
+   "event": [
+    {
+     "listen": "test",
+     "script": {
+      "type": "text/javascript",
+      "exec": [
+       "var data = pm.response.json();",
+       "pm.globals.set(\"adopter_id_2\", data.id);",
+       "pm.test(\"Status code is 201\", function () {",
+       "   pm.response.to.have.status(201);",
+       "});"
+      ]
+     }
+    }
+   ],
+   "request": {
+    "method": "POST",
+    "header": [
+     {
+      "key": "Content-Type",
+      "value": "application/json"
+     }
+    ],
+    "body": {
+     "mode": "raw",
+     "raw": "{\n    \"name\": \"Carlos Perez\",\n    \"email\": \"adopter.review.adopter_id_2.{{$timestamp}}@example.com\",\n    \"phone\": \"3001234567\",\n    \"address\": \"Calle 45 # 12-30, Bogota\"\n}",
+     "options": {
+      "raw": {
+       "language": "json"
+      }
+     }
+    },
+    "url": {
+     "raw": "{{baseUrl}}/adopters",
+     "host": [
+      "{{baseUrl}}"
+     ],
+     "path": [
+      "adopters"
+     ]
+    },
+    "description": "Setup: crea un adoptante. Email con {{$timestamp}} para poder re-ejecutar la colección. Captura adopter_id_2."
+   },
+   "response": []
+  },
   {
    "name": "Crear una review de otro adoptante (setup)",
    "request": {
