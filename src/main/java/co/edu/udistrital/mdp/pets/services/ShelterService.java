@@ -56,9 +56,12 @@ public class ShelterService {
         if (!validateShelter(shelter))
             throw new IllegalOperationException(ErrorMessage.SHELTER_NOT_VALID);
 
-        shelter.setId(shelterId);
+        ShelterEntity existingShelter = shelterOptional.get();
+        existingShelter.setName(shelter.getName());
+        existingShelter.setCity(shelter.getCity());
+
         log.info("Finished process to update shelter with id = ", shelterId);
-        return shelterRepository.save(shelter);
+        return shelterRepository.save(existingShelter);
     }
 
     @Transactional(rollbackFor = {EntityNotFoundException.class, IllegalOperationException.class})
