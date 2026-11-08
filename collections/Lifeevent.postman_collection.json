@@ -6,12 +6,198 @@
 	},
 	"item": [
 		{
+			"name": "Crear un refugio (setup)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/shelters",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"shelters"
+					]
+				},
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Refugio Vida Animal\",\n    \"city\": \"Bogota\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				}
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var data = pm.response.json();",
+							"pm.globals.set(\"shelter_id_1\", data.id);",
+							"pm.test(\"Status code is 201\", function () {",
+							"   pm.response.to.have.status(201);",
+							"});"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Crear una mascota (setup)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/pets",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"pets"
+					]
+				},
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Toby\",\n    \"species\": \"Perro\",\n    \"breed\": \"Labrador\",\n    \"age\": 2,\n    \"sex\": \"Macho\",\n    \"size\": \"Grande\",\n    \"temperament\": \"Tranquilo\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				}
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var data = pm.response.json();",
+							"pm.globals.set(\"pet_id_1\", data.id);",
+							"pm.test(\"Status code is 201\", function () {",
+							"   pm.response.to.have.status(201);",
+							"});"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Crear una segunda mascota (setup, no asociada)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/pets",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"pets"
+					]
+				},
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Nina\",\n    \"species\": \"Gato\",\n    \"breed\": \"Criollo\",\n    \"age\": 1,\n    \"sex\": \"Hembra\",\n    \"size\": \"Pequeño\",\n    \"temperament\": \"Curiosa\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				}
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var data = pm.response.json();",
+							"pm.globals.set(\"pet_id_2\", data.id);",
+							"pm.test(\"Status code is 201\", function () {",
+							"   pm.response.to.have.status(201);",
+							"});"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Crear un veterinario (setup)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/veterinarians",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"veterinarians"
+					]
+				},
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Dra. Ana Torres\",\n    \"email\": \"ana.torres@example.com\",\n    \"phone\": \"3201112233\",\n    \"specialty\": \"Cirugia\",\n    \"availability\": \"Fines de semana\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				}
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var data = pm.response.json();",
+							"pm.globals.set(\"veterinarian_id_1\", data.id);",
+							"pm.test(\"Status code is 201\", function () {",
+							"   pm.response.to.have.status(201);",
+							"});"
+						]
+					}
+				}
+			]
+		},
+		{
 			"name": "Agregar un evento de vida a una mascota",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
+							"var data = pm.response.json();",
+							"pm.globals.set(\"lifeEvent_id_1\", data.id);",
 							"pm.test(\"Status code is 201\", function () {",
 							"   pm.response.to.have.status(201);",
 							"});"
@@ -94,6 +280,54 @@
 					"body": "{\n    \"id\": 1,\n    \"type\": \"Vacunación\",\n    \"description\": \"Aplicación de la vacuna antirrábica\",\n    \"date\": \"2026-05-10T05:00:00.000+00:00\",\n    \"veterinarian\": {\n        \"id\": 1,\n        \"name\": \"Laura Martínez\",\n        \"email\": \"laura.martinez@refugio.org\",\n        \"phone\": \"3105551234\",\n        \"specialty\": \"Medicina interna\",\n        \"availability\": \"Lunes a viernes 8:00-14:00\"\n    }\n}"
 				}
 			]
+		},
+		{
+			"name": "Agregar un evento de vida a otra mascota (setup)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.response.json();",
+							"pm.globals.set(\"lifeEvent_id_2\", data.id);",
+							"pm.test(\"Status code is 201\", function () {",
+							"   pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/pets/{{pet_id_2}}/lifeEvents",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"pets",
+						"{{pet_id_2}}",
+						"lifeEvents"
+					]
+				},
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"type\": \"Vacunación\",\n    \"description\": \"Aplicación de la vacuna antirrábica\",\n    \"date\": \"2026-05-10T00:00:00-05:00\",\n    \"veterinarian\": {\n        \"id\": \"{{veterinarian_id_1}}\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				}
+			},
+			"response": []
 		},
 		{
 			"name": "Agregar un evento de vida a una mascota que no existe",
