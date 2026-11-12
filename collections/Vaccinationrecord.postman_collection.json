@@ -6,6 +6,144 @@
 	},
 	"item": [
 		{
+			"name": "Crear un refugio (setup)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/shelters",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"shelters"
+					]
+				},
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Refugio Huellitas\",\n    \"city\": \"Bogota\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				}
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var data = pm.response.json();",
+							"pm.globals.set(\"shelter_id_1\", data.id);",
+							"pm.test(\"Status code is 201\", function () {",
+							"   pm.response.to.have.status(201);",
+							"});"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Crear una mascota (setup)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/pets",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"pets"
+					]
+				},
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Simba\",\n    \"species\": \"Gato\",\n    \"breed\": \"Criollo\",\n    \"age\": 2,\n    \"sex\": \"Macho\",\n    \"size\": \"Mediano\",\n    \"temperament\": \"Independiente\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				}
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var data = pm.response.json();",
+							"pm.globals.set(\"pet_id_1\", data.id);",
+							"pm.test(\"Status code is 201\", function () {",
+							"   pm.response.to.have.status(201);",
+							"});"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Crear otra mascota sin registro de vacunacion (setup)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/pets",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"pets"
+					]
+				},
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Kira\",\n    \"species\": \"Perro\",\n    \"breed\": \"Criollo\",\n    \"age\": 1,\n    \"sex\": \"Hembra\",\n    \"size\": \"Pequeño\",\n    \"temperament\": \"Timida\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				}
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var data = pm.response.json();",
+							"pm.globals.set(\"pet_id_2\", data.id);",
+							"pm.test(\"Status code is 201\", function () {",
+							"   pm.response.to.have.status(201);",
+							"});"
+						]
+					}
+				}
+			]
+		},
+		{
 			"name": "Crear el carnet de vacunación de una mascota",
 			"event": [
 				{
@@ -41,7 +179,7 @@
 				},
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-03-03T00:00:00-05:00\"\n}",
+					"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-03-03\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -73,7 +211,7 @@
 						},
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-03-03T00:00:00-05:00\"\n}",
+							"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-03-03\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -131,7 +269,7 @@
 				},
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-03-03T00:00:00-05:00\"\n}",
+					"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-03-03\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -163,7 +301,7 @@
 						},
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-03-03T00:00:00-05:00\"\n}",
+							"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-03-03\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -221,7 +359,7 @@
 				},
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-03-03T00:00:00-05:00\"\n}",
+					"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-03-03\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -253,7 +391,7 @@
 						},
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-03-03T00:00:00-05:00\"\n}",
+							"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo\",\n    \"nextDueDate\": \"2027-03-03\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -311,7 +449,7 @@
 				},
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"vaccinesApplied\": \"\",\n    \"nextDueDate\": \"2027-03-03T00:00:00-05:00\"\n}",
+					"raw": "{\n    \"vaccinesApplied\": \"\",\n    \"nextDueDate\": \"2027-03-03\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -343,7 +481,7 @@
 						},
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"vaccinesApplied\": \"\",\n    \"nextDueDate\": \"2027-03-03T00:00:00-05:00\"\n}",
+							"raw": "{\n    \"vaccinesApplied\": \"\",\n    \"nextDueDate\": \"2027-03-03\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -587,7 +725,7 @@
 				},
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo, Leptospirosis\",\n    \"nextDueDate\": \"2027-09-03T00:00:00-05:00\"\n}",
+					"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo, Leptospirosis\",\n    \"nextDueDate\": \"2027-09-03\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -619,7 +757,7 @@
 						},
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo, Leptospirosis\",\n    \"nextDueDate\": \"2027-09-03T00:00:00-05:00\"\n}",
+							"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo, Leptospirosis\",\n    \"nextDueDate\": \"2027-09-03\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -677,7 +815,7 @@
 				},
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo, Leptospirosis\",\n    \"nextDueDate\": \"2027-09-03T00:00:00-05:00\"\n}",
+					"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo, Leptospirosis\",\n    \"nextDueDate\": \"2027-09-03\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -709,7 +847,7 @@
 						},
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo, Leptospirosis\",\n    \"nextDueDate\": \"2027-09-03T00:00:00-05:00\"\n}",
+							"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo, Leptospirosis\",\n    \"nextDueDate\": \"2027-09-03\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -767,7 +905,7 @@
 				},
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo, Leptospirosis\",\n    \"nextDueDate\": \"2027-09-03T00:00:00-05:00\"\n}",
+					"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo, Leptospirosis\",\n    \"nextDueDate\": \"2027-09-03\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -799,7 +937,7 @@
 						},
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo, Leptospirosis\",\n    \"nextDueDate\": \"2027-09-03T00:00:00-05:00\"\n}",
+							"raw": "{\n    \"vaccinesApplied\": \"Rabia, Parvovirus, Moquillo, Leptospirosis\",\n    \"nextDueDate\": \"2027-09-03\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

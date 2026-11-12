@@ -6,12 +6,198 @@
 	},
 	"item": [
 		{
+			"name": "Crear un refugio (setup)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/shelters",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"shelters"
+					]
+				},
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Refugio Vida Animal\",\n    \"city\": \"Bogota\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				}
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var data = pm.response.json();",
+							"pm.globals.set(\"shelter_id_1\", data.id);",
+							"pm.test(\"Status code is 201\", function () {",
+							"   pm.response.to.have.status(201);",
+							"});"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Crear una mascota (setup)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/pets",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"pets"
+					]
+				},
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Toby\",\n    \"species\": \"Perro\",\n    \"breed\": \"Labrador\",\n    \"age\": 2,\n    \"sex\": \"Macho\",\n    \"size\": \"Grande\",\n    \"temperament\": \"Tranquilo\",\n    \"specialNeeds\": \"Ninguna\",\n    \"available\": true,\n    \"shelter\": {\n        \"id\": \"{{shelter_id_1}}\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				}
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var data = pm.response.json();",
+							"pm.globals.set(\"pet_id_1\", data.id);",
+							"pm.test(\"Status code is 201\", function () {",
+							"   pm.response.to.have.status(201);",
+							"});"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Crear un segundo veterinario (setup)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.response.json();",
+							"pm.globals.set(\"veterinarian_id_2\", data.id);",
+							"pm.test(\"Status code is 201\", function () {",
+							"   pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/veterinarians",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"veterinarians"
+					]
+				},
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Carlos Gómez\",\n    \"email\": \"carlos.gomez@refugio.org\",\n    \"phone\": \"3205559876\",\n    \"specialty\": \"Cirugía\",\n    \"availability\": \"Lunes a viernes 14:00-18:00\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crear un evento de vida con el segundo veterinario (setup)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"   pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/pets/{{pet_id_1}}/lifeEvents",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"pets",
+						"{{pet_id_1}}",
+						"lifeEvents"
+					]
+				},
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"type\": \"Vacunación\",\n    \"description\": \"Aplicación de la vacuna antirrábica\",\n    \"date\": \"2026-05-10T00:00:00-05:00\",\n    \"veterinarian\": {\n        \"id\": \"{{veterinarian_id_2}}\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Crear un veterinario",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
+							"var data = pm.response.json();",
+							"pm.globals.set(\"veterinarian_id_1\", data.id);",
 							"pm.test(\"Status code is 201\", function () {",
 							"   pm.response.to.have.status(201);",
 							"});"
